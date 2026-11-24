@@ -18,244 +18,398 @@
 @section('meta')
     <title>Bali Best Activity - Bali Driver Activity</title>
     <meta content="bali destinations, visit bali interesting place" name="description">
-    <meta content="bali good tour, car rental bali, ubud tour, bali tour" name="keywords">
+    <meta content="bali good tour, car rental bali, ubud tour, bali tour {{ $mixDetail[0]->slug }}" name="keywords">
 
-    <title>BDA</title>
-    <meta content="{{ $mixDetail[0]->slug }}" name="keywords">
 @endsection
 @section('content')
     
     <!-- Page Title -->
     <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/travel/showcase-8.webp);">
       <div class="container position-relative">
-        <h1>Tour Details</h1>
-        <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
+        <h1>{{ $mixDetail[0]->product_name }}</h1>
         <nav class="breadcrumbs">
           <ol>
-            <li><a href="index.html">Home</a></li>
+            <li><a href="/">Home</a></li>
             <li class="current">Tour Details</li>
           </ol>
         </nav>
       </div>
     </div><!-- End Page Title -->
 
+      <!-- Gallery Slider Section -->
+      <section id="about" class="about">
+        <div class="container">
+
+
+          @php
+            $galleryPhotos = [];
+            if (!empty($mixDetail[0]->product_foto)) {
+                $galleryPhotos = array_values(array_filter(array_map('trim', explode(';', $mixDetail[0]->product_foto))));
+            }
+            if (empty($galleryPhotos)) {
+                $galleryPhotos = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
+            }
+            $featuredPhotos = array_slice($galleryPhotos, 0, 5);
+          @endphp
+
+          <style>
+            .gallery-showcase {
+              display: grid;
+              grid-template-columns: 1.8fr 1fr 1fr;
+              grid-template-rows: repeat(2, 160px);
+              gap: 12px;
+              max-width: 980px;
+              margin: 0 auto 28px;
+            }
+
+            .gallery-showcase-item {
+              position: relative;
+              overflow: hidden;
+              border-radius: 22px;
+              box-shadow: 0 18px 35px rgba(17, 24, 39, 0.12);
+              background: #f2f2f2;
+              cursor: pointer;
+            }
+
+            .gallery-showcase-item img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              display: block;
+              transition: transform 0.35s ease;
+            }
+
+            .gallery-showcase-item:hover img {
+              transform: scale(1.05);
+            }
+
+            .gallery-showcase-item.featured {
+              grid-row: span 2;
+            }
+
+            .gallery-overlay {
+              position: absolute;
+              inset: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: rgba(15, 23, 42, 0.45);
+              color: #fff;
+              font-size: 1.2rem;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+            }
+
+            .gallery-lightbox {
+              position: fixed;
+              inset: 0;
+              background: rgba(15, 23, 42, 0.85);
+              display: none;
+              align-items: center;
+              justify-content: center;
+              z-index: 9999;
+              padding: 24px;
+            }
+
+            .gallery-lightbox.active {
+              display: flex;
+            }
+
+            .gallery-lightbox img {
+              max-width: 90vw;
+              max-height: 85vh;
+              border-radius: 18px;
+              object-fit: contain;
+              box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+              background: #fff;
+            }
+
+            .gallery-lightbox-close {
+              position: absolute;
+              top: 18px;
+              right: 22px;
+              font-size: 2.2rem;
+              color: #fff;
+              cursor: pointer;
+              line-height: 1;
+            }
+
+            .gallery-nav-btn {
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 48px;
+              height: 48px;
+              border: none;
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.2);
+              color: #fff;
+              font-size: 2rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              backdrop-filter: blur(4px);
+              transition: background 0.2s ease;
+            }
+
+            .gallery-nav-btn:hover {
+              background: rgba(255, 255, 255, 0.35);
+            }
+
+            .gallery-nav-prev {
+              left: 24px;
+            }
+
+            .gallery-nav-next {
+              right: 24px;
+            }
+
+            @media (max-width: 768px) {
+              .gallery-showcase {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+              }
+
+              .gallery-showcase-item.featured {
+                grid-column: span 2;
+                grid-row: auto;
+                min-height: 260px;
+              }
+
+              .gallery-nav-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.5rem;
+              }
+            }
+          </style>
+
+          <div class="gallery-showcase" id="galleryShowcase">
+            @foreach ($featuredPhotos as $index => $photo)
+              @php
+                $photoPath = asset('assets/img/products/' . $photo);
+                $isFeatured = $index === 0;
+                $showOverlay = $index === 4 && count($galleryPhotos) > 5;
+              @endphp
+
+              <div class="gallery-showcase-item {{ $isFeatured ? 'featured' : '' }}" data-image="{{ $photoPath }}" data-index="{{ $index }}" aria-label="Open photo {{ $index + 1 }}">
+                <img src="{{ $photoPath }}" alt="Tour photo {{ $index + 1 }}">
+                @if ($showOverlay)
+                  <div class="gallery-overlay">+{{ count($galleryPhotos) - 5 }} Foto</div>
+                @endif
+              </div>
+            @endforeach
+          </div>
+
+          <div class="gallery-lightbox" id="galleryLightbox" aria-label="Photo preview">
+            <span class="gallery-lightbox-close" id="galleryLightboxClose" aria-label="Close gallery">&times;</span>
+            <button class="gallery-nav-btn gallery-nav-prev" id="galleryPrevBtn" type="button" aria-label="Previous photo">&#8249;</button>
+            <img id="galleryLightboxImage" src="" alt="Full size gallery image">
+            <button class="gallery-nav-btn gallery-nav-next" id="galleryNextBtn" type="button" aria-label="Next photo">&#8250;</button>
+          </div>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              const modal = document.getElementById('galleryLightbox');
+              const modalImage = document.getElementById('galleryLightboxImage');
+              const closeBtn = document.getElementById('galleryLightboxClose');
+              const prevBtn = document.getElementById('galleryPrevBtn');
+              const nextBtn = document.getElementById('galleryNextBtn');
+              const items = Array.from(document.querySelectorAll('.gallery-showcase-item'));
+              let currentIndex = 0;
+
+              function openLightbox(index) {
+                currentIndex = index;
+                const imageSrc = items[currentIndex].getAttribute('data-image');
+                modalImage.src = imageSrc;
+                modal.classList.add('active');
+              }
+
+              function closeLightbox() {
+                modal.classList.remove('active');
+                modalImage.src = '';
+              }
+
+              function showNext() {
+                if (items.length === 0) return;
+                currentIndex = (currentIndex + 1) % items.length;
+                modalImage.src = items[currentIndex].getAttribute('data-image');
+              }
+
+              function showPrev() {
+                if (items.length === 0) return;
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                modalImage.src = items[currentIndex].getAttribute('data-image');
+              }
+
+              items.forEach(function (item, index) {
+                item.addEventListener('click', function () {
+                  openLightbox(index);
+                });
+              });
+
+              closeBtn.addEventListener('click', closeLightbox);
+              prevBtn.addEventListener('click', showPrev);
+              nextBtn.addEventListener('click', showNext);
+
+              modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                  closeLightbox();
+                }
+              });
+
+              document.addEventListener('keydown', function (event) {
+                if (!modal.classList.contains('active')) return;
+
+                if (event.key === 'Escape') {
+                  closeLightbox();
+                }
+
+                if (event.key === 'ArrowRight') {
+                  showNext();
+                }
+
+                if (event.key === 'ArrowLeft') {
+                  showPrev();
+                }
+              });
+            });
+          </script>
+        </div>
+      </section><!-- End Gallery Slider Section -->
+
     <!-- Travel Tour Details Section -->
     <section id="travel-tour-details" class="travel-tour-details section">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="container">
 
-        <!-- Gallery Slider Section -->
-    <section id="gallery-slider" class="gallery-slider section">
+      
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <div class="gallery-container">
-          <div class="swiper init-swiper">
-            <script type="application/json" class="swiper-config">
-              {
-                "loop": true,
-                "speed": 800,
-                "autoplay": {
-                  "delay": 4000
-                },
-                "effect": "coverflow",
-                "grabCursor": true,
-                "centeredSlides": true,
-                "slidesPerView": "auto",
-                "coverflowEffect": {
-                  "rotate": 50,
-                  "stretch": 0,
-                  "depth": 100,
-                  "modifier": 1,
-                  "slideShadows": true
-                },
-                "pagination": {
-                  "el": ".swiper-pagination",
-                  "type": "bullets",
-                  "clickable": true
-                },
-                "navigation": {
-                  "nextEl": ".swiper-button-next",
-                  "prevEl": ".swiper-button-prev"
-                },
-                "breakpoints": {
-                  "320": {
-                    "slidesPerView": 1,
-                    "spaceBetween": 10
-                  },
-                  "768": {
-                    "slidesPerView": 2,
-                    "spaceBetween": 20
-                  },
-                  "1024": {
-                    "slidesPerView": 3,
-                    "spaceBetween": 30
-                  }
-                }
-              }
-            </script>
-            <div class="swiper-wrapper">
-            @php $gmbra = explode(";",$mixDetail[0]->product_foto) ; @endphp
-            @php $gmbr = array_slice($gmbra, 0, -1) ; @endphp
-            @foreach($gmbr as $value)
-              <div class="swiper-slide">
-                <div class="gallery-item">
-                    <div class="gallery-img">
-                       
-                        <a class="glightbox" data-gallery="images-gallery" href="{{ asset('assets/img/products/'. $value) }}">
-                        <img src="{{ asset('assets/img/products/'. $value) }}" class="img-fluid" alt="">
-                        <div class="gallery-overlay">
-                            <i class="bi bi-plus-circle"></i>
-                        </div>
-                        </a>
-                        
-                    </div>
-                </div>
-              </div>
-              @endforeach
-              
-            </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-          </div>
-        </div>
-
-      </div>
-
-    </section><!-- /Gallery Slider Section -->
 
         <!-- Tour Overview -->
-        <div class="tour-overview" data-aos="fade-up" data-aos-delay="200">
+        <div class="tour-overview">
           <div class="row">
 
 
             <div class="col-lg-8">
               <h2>Tour Overview</h2>
-              <p>Embark on an unforgettable journey through the heart of the Mediterranean, where ancient civilizations left their mark on stunning landscapes. This comprehensive tour takes you from the romantic canals of Venice to the sun-soaked islands of Santorini, culminating in the magical city of Istanbul where East meets West.</p>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <div class="tour-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+                <span>4.8 (95)</span>
+              </div>
+              {!! $mixDetail[0]->product_des !!}
               <div class="tour-pricing" data-aos="fade-up" data-aos-delay="500">
                   <div class="available-dates">
                     <h3></h3>
-                    <div class="dates-grid">
-                      <div class="date-option">
-                        <i class="bi bi-currency-dollar"></i>
-                        <div class="date">May 15-26</div>
-                        <div class="availability">6 spots left</div>
+                    <div class="tour-benefits-grid">
+                      <div class="date-option benefit-low-price">
+                        <i class="bi bi-tags-fill" aria-hidden="true"></i>
+                        <div class="date">always low price</div>
+                        <div class="availability">Best value</div>
                       </div>
-                      <div class="date-option">
-                        <i class="bi bi-shield-check"></i>
-                        <div class="date">June 12-23</div>
-                        <div class="availability">Available</div>
+                      <div class="date-option benefit-local-guide">
+                        <i class="bi bi-person-vcard-fill" aria-hidden="true"></i>
+                        <div class="date">local guide</div>
+                        <div class="availability">Local expertise</div>
                       </div>
-                      <div class="date-option">
-                        <i class="bi bi-calendar"></i>
-                        <div class="date">July 10-21</div>
-                        <div class="availability">Almost full</div>
+                      <div class="date-option benefit-flexible">
+                        <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                        <div class="date">free cancel anytime</div>
+                        <div class="availability">Flexible booking</div>
                       </div>
-                      
+                      <div class="date-option benefit-cancellation">
+                        <i class="bi bi-shield-check-fill" aria-hidden="true"></i>
+                        <div class="date">full refund</div>
+                        <div class="availability">book with confidence</div>
+                      </div>
                     </div>
                   </div>
               </div>
             </div>
-            <div class="col-lg-4">
-              <div class="tour-highlights">
-                <div class="booking-widget">
-                  
-                    <div class="booking-card-compact">
-                      <h4 class="mb-3 d-none d-lg-block">Quick Booking</h4>
-                      
-                      <!-- Mobile: Button only -->
-                      <button type="button" class="btn btn-primary w-100 d-lg-none" data-toggle="modal" data-target="#bookingModal">
-                        Book Now - {{ $mixDetail[0]->price }}
-                      </button>
-                      
-                      <!-- Desktop: Full form -->
-                      <form class="booking-form-compact d-none d-lg-block">
-                        <div class="form-group mb-2">
-                          <label class="form-label small">Travel Date</label>
-                          <input type="date" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="form-group mb-2">
-                          <label class="form-label small">Travelers</label>
-                          <select class="form-control form-control-sm"">
-                            <option>1 Person</option>
-                            <option>2 People</option>
-                            <option>3+ People</option>
-                          </select>
-                        </div>
-                        <div class="price-display mb-3 p-2 bg-light rounded text-center">
-                          <small>Starting from</small>
-                          <div class="h5 mb-0">{{ $mixDetail[0]->price }}</div>
-                        </div>
-                        <button type="button" class="btn btn-primary btn-sm w-100" data-toggle="modal" data-target="#bookingModal">Check Availability</button>
-                      </form>
+            <div class="col-lg-4 booking-sidebar">
+              <div class="tour-highlights ">
+                <div class="booking-widget ">
+                  <div class="booking-card-compact">
+                    <div class="booking-card-heading">
+                      <div>
+                        <span class="booking-eyebrow">Plan your trip</span>
+                        <h4>Quick Booking</h4>
+                      </div>
+                      <i class="bi bi-calendar2-check-fill booking-card-icon" aria-hidden="true"></i>
                     </div>
-                    <!-- Booking Modal -->
-                    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="bookingModalLabel">Quick Booking</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <form>
-                              <div class="mb-3">
-                                <label for="bookingName" class="form-label">Your Name</label>
-                                <input type="text" class="form-control" id="bookingName" required>
-                              </div>
-                              <div class="mb-3">
-                                <label for="bookingEmail" class="form-label">Your Email</label>
-                                <input type="email" class="form-control" id="bookingEmail" required>
-                              </div>
-                              <div class="mb-3">
-                                <label for="bookingDate" class="form-label">Travel Date</label>
-                                <input type="date" class="form-control" id="bookingDate" required>
-                              </div>
-                              <div class="mb-3">
-                                <label for="bookingTravelers" class="form-label">Number of Travelers</label>
-                                <select class="form-select" id="bookingTravelers" required>
-                                  <option value="" disabled selected>Select number of travelers</option>
-                                  <option value="1">1 Person</option>
-                                  <option value="2">2 People</option>
-                                  <option value="3">3+ People</option>
-                                </select>
-                              </div>
-                            </form>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Submit Booking</button>
-                          </div>
+
+                    <div class="mobile-booking-price">
+                      <span>Starting from</span>
+                      <strong>{{ session('currency', 'USD') }} {{ number_format(convertPrice($mixDetail[0]->price, session('currency', 'USD')), 0) }}</strong>
+                    </div>
+
+                    <form class="booking-form-compact" id="mixBookingForm">
+                      <div class="form-group mb-3">
+                        <label class="form-label small" for="mix-travel-date">Travel Date</label>
+                        <div class="date-picker-field">
+                          <i class="bi bi-calendar-heart-fill date-picker-icon" aria-hidden="true"></i>
+                          <input type="text" name="travel_date" id="mix-travel-date" class="form-control form-control-sm" data-datepicker placeholder="Choose a date" autocomplete="off" required>
                         </div>
                       </div>
-                    </div>
-                    
-                    </div>
-                </div>
-                <h3>Tour Highlights</h3>
-                <a href="{{ route('auth.google.redirect') }}" class="btn bg-blue-100 p-3 shadow-sm border rounded-md text-blue-900">
-                    Login with Google 
-                </a>
+                      <div class="form-group mb-3">
+                        <label class="form-label small" for="mix-travelers">Travelers</label>
+                        <select id="mix-travelers" name="travelers" class="form-select form-select-sm">
+                          <option value="1">1 Person</option>
+                          <option value="2">2 People</option>
+                          <option value="3">3+ People</option>
+                        </select>
+                      </div>
+                      <div class="price-display mb-3">
+                        <span>Starting from</span>
+                        <strong>{{ session('currency', 'USD') }} {{ number_format(convertPrice($mixDetail[0]->price, session('currency', 'USD')), 0) }}</strong>
+                      </div>
+                      <button type="submit" class="btn booking-check-btn btn-sm w-100">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i> Check Availability
+                      </button>
+                    </form>
 
-                <!-- <ul>
-                  <li><i class="bi bi-check-circle"></i> 4-Star Boutique Hotels</li>
-                  <li><i class="bi bi-check-circle"></i> Expert Local Guides</li>
-                  <li><i class="bi bi-check-circle"></i> Daily Breakfast Included</li>
-                  <li><i class="bi bi-check-circle"></i> Small Group (Max 16)
-                  </li>
-                  <li><i class="bi bi-check-circle"></i> UNESCO World Heritage Sites</li>
-                  <li><i class="bi bi-check-circle"></i> Cultural Experiences</li>
-                </ul> -->
+                    <button type="button" class="booking-mobile-toggle" id="bookingMobileToggle" aria-controls="mixBookingForm" aria-expanded="false">
+                      <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>
+                      Check Availability
+                    </button>
+
+                    <a href="https://api.whatsapp.com/send?phone=62818688114&text=Hello%20Bali%20Driver%20Activity" class="booking-whatsapp-btn" target="_blank" rel="noopener">
+                      <i class="bi bi-whatsapp me-2" aria-hidden="true"></i>
+                      Chat via WhatsApp
+                    </a>
+                  </div>
+                </div>
+                <div class="booking-card-heading">
+                  <div>
+                    <span class="booking-eyebrow">Plan your trip</span>
+                    <h4>Things to do in Bali</h4>
+                  </div>
+                  <i class="bi bi-calendar2-check-fill booking-card-icon" aria-hidden="true"></i>
+                </div>
+                <!-- <h3 class="tour-keyword-title">Things to do in Bali</h3> -->
+                <div class="tour-keyword-tags" aria-label="Things to do in Bali">
+                  <span><i class="bi bi-speedometer2" aria-hidden="true"></i> ATV rides</span>
+                  <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Ubud</span>
+                  <span><i class="bi bi-person-hiking" aria-hidden="true"></i> Trekking</span>
+                  <span><i class="bi bi-sunrise-fill" aria-hidden="true"></i> Sunrise tours</span>
+                  <span><i class="bi bi-water" aria-hidden="true"></i> Canggu</span>
+                  <span><i class="bi bi-droplet-half" aria-hidden="true"></i> Waterfalls</span>
+                </div>
               </div>
 
             </div>
 
+            
+            @if(!empty($mixDetail[0]->itinerary))
             <div class="col-lg-8">
-
               <!-- Itinerary -->
-              <div class="tour-itinerary" data-aos="fade-up" data-aos-delay="300">
+              <div class="tour-itinerary itinerary-section" data-aos="fade-up" data-aos-delay="300">
                 <h2>Itinerary</h2>
                 <div class="itinerary-timeline">
 
@@ -276,20 +430,20 @@
                   
                 </div>
               </div>
-
+            @endif
               <!-- Inclusions -->
               <div class="tour-inclusions" data-aos="fade-up" data-aos-delay="400">
                 <div class="row">
                   <div class="col-lg-6">
-                    <div class="included-section">
+                    <div class="included-section inclusion-panel">
                       <h3><i class="bi bi-check-circle-fill"></i> What's Included</h3>
-                      <p>{!! $mixDetail[0]->product_included !!}</p>
+                      <div class="inclusion-content">{!! $mixDetail[0]->product_included !!}</div>
                     </div>
                   </div>
                   <div class="col-lg-6">
-                    <div class="excluded-section">
+                    <div class="excluded-section inclusion-panel">
                       <h3><i class="bi bi-x-circle-fill"></i> What's Not Included</h3>
-                      <p>{!! $mixDetail[0]->product_excluded !!}</p>
+                      <div class="inclusion-content">{!! $mixDetail[0]->product_excluded !!}</div>
                         
                     </div>
                   </div>
@@ -306,6 +460,84 @@
             </div>
           </div>
         </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const bookingSidebar = document.querySelector('.booking-sidebar');
+            const bookingCard = bookingSidebar ? bookingSidebar.querySelector('.tour-highlights') : null;
+            const detailSection = document.getElementById('travel-tour-details');
+            const desktopBreakpoint = 992;
+            const headerOffset = 96;
+
+            if (!bookingSidebar || !bookingCard || !detailSection) return;
+
+            function updateBookingPosition() {
+              if (window.innerWidth < desktopBreakpoint) {
+                bookingSidebar.classList.remove('booking-is-fixed', 'booking-is-bottom');
+                bookingCard.style.width = '';
+                bookingCard.style.left = '';
+                return;
+              }
+
+              bookingSidebar.classList.remove('booking-is-fixed', 'booking-is-bottom');
+              bookingCard.style.width = '';
+              bookingCard.style.left = '';
+
+              const sidebarRect = bookingSidebar.getBoundingClientRect();
+              const sectionRect = detailSection.getBoundingClientRect();
+              const cardHeight = bookingCard.offsetHeight;
+              const shouldFix = sectionRect.top <= headerOffset && sectionRect.bottom > headerOffset + cardHeight;
+
+              if (shouldFix) {
+                bookingSidebar.classList.add('booking-is-fixed');
+                bookingCard.style.width = `${sidebarRect.width}px`;
+                bookingCard.style.left = `${sidebarRect.left}px`;
+              } else if (sectionRect.bottom <= headerOffset + cardHeight) {
+                bookingSidebar.classList.add('booking-is-bottom');
+              }
+            }
+
+            window.addEventListener('scroll', updateBookingPosition, { passive: true });
+            window.addEventListener('resize', updateBookingPosition);
+            updateBookingPosition();
+          });
+        </script>
+
+        <script>
+          
+          document.addEventListener('DOMContentLoaded', function () {
+            const bookingToggle = document.getElementById('bookingMobileToggle');
+            const bookingForm = document.getElementById('mixBookingForm');
+            const bookingCard = bookingToggle ? bookingToggle.closest('.booking-card-compact') : null;
+
+            if (!bookingToggle || !bookingForm || !bookingCard) return;
+
+            function updateMobileBookingButton() {
+              if (window.innerWidth >= 992 || !bookingForm.classList.contains('is-visible')) return;
+
+              const formRect = bookingForm.getBoundingClientRect();
+              const hasPassedForm = formRect.bottom < 80;
+              bookingToggle.classList.toggle('is-hidden', !hasPassedForm);
+            }
+
+            bookingToggle.addEventListener('click', function () {
+              bookingToggle.setAttribute('aria-expanded', 'true');
+              bookingToggle.classList.add('is-hidden');
+              bookingCard.classList.add('is-open');
+              bookingForm.classList.add('is-visible');
+
+              window.setTimeout(function () {
+                const targetTop = bookingCard.getBoundingClientRect().top + window.scrollY - 110;
+                window.scrollTo({ top: targetTop, behavior: 'smooth' });
+                updateMobileBookingButton();
+              }, 50);
+            });
+
+            window.addEventListener('scroll', updateMobileBookingButton, { passive: true });
+            window.addEventListener('resize', updateMobileBookingButton);
+            
+          });
+        </script>
 
         
 

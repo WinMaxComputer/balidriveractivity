@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('meta')
-    <title>Bali Driver Activity</title>
+    <title>BALI SCENIC</title>
     <meta name="description" content="Discover and book unique travel experiences in Bali with Hire Bali Driver. From cultural tours to adventure activities, find authentic local experiences at the best prices.">
     <meta name="keywords" content="Bali tours, Indonesia travel, activities Bali, tour booking, travel experiences, adventure tours, cultural tours, Bali activities">
 @endsection
@@ -14,7 +14,7 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <!-- About Us Content -->
-        <div class="row align-items-center mb-5">
+        <!-- <div class="row align-items-center mb-5">
           <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
             <div class="content">
               <h3>Explore the World with Confidence</h3>
@@ -45,7 +45,8 @@
               </div>
             </div>
           </div>
-        </div><!-- End About Us Content -->
+        </div> -->
+        <!-- End About Us Content -->
 
         <!-- Featured Tours Section -->
         <section id="featured-tours" class="featured-tours section">
@@ -122,13 +123,22 @@
         <div class="why-choose-section">
           <div class="row justify-content-center">
             <div class="col-lg-8 text-center mb-5" data-aos="fade-up" data-aos-delay="100">
-              <h3>Why Choose Us for Your Next Adventure</h3>
-              <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+              <h3>Why Choose us</h3>
+              <p>
+                Friendly and professional local drivers
+                Comfortable and reliable transportation
+                Flexible itineraries tailored to your interests
+                Personalized service and local recommendations
+                Explore popular destinations and hidden gems
+                A smooth, safe, and enjoyable travel experience
+                Let us take you beyond the ordinary and discover Bali in your own way.
+                Whether you seek relaxation, adventure, culture, or breathtaking scenery, Bali Scenic is here to make your Bali holiday truly unforgettable.
+              </p>
             </div>
           </div>
 
-          <div class="row g-4">
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="why-benefits-grid">
+            <div class="why-benefit-item" data-aos="fade-up" data-aos-delay="200">
               <div class="feature-card">
                 <div class="feature-icon">
                   <i class="bi bi-people-fill"></i>
@@ -138,7 +148,7 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="why-benefit-item" data-aos="fade-up" data-aos-delay="250">
               <div class="feature-card">
                 <div class="feature-icon">
                   <i class="bi bi-shield-check"></i>
@@ -148,17 +158,17 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="why-benefit-item" data-aos="fade-up" data-aos-delay="300">
               <div class="feature-card">
                 <div class="feature-icon">
-                  <i class="bi bi-cash"></i>
+                  <i class="bi bi-tags-fill"></i>
                 </div>
                 <h4>Best Prices</h4>
                 <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet consectetur adipisci velit.</p>
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="350">
+            <div class="why-benefit-item" data-aos="fade-up" data-aos-delay="350">
               <div class="feature-card">
                 <div class="feature-icon">
                   <i class="bi bi-headset"></i>
@@ -168,25 +178,17 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="why-benefit-item" data-aos="fade-up" data-aos-delay="400">
               <div class="feature-card">
                 <div class="feature-icon">
-                  <i class="bi bi-geo-alt-fill"></i>
+                  <i class="bi bi-wallet2"></i>
                 </div>
-                <h4>Global Destinations</h4>
-                <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae.</p>
+                <h4>Low Price</h4>
+                <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam nisi.</p>
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="450">
-              <div class="feature-card">
-                <div class="feature-icon">
-                  <i class="bi bi-star-fill"></i>
-                </div>
-                <h4>Premium Experience</h4>
-                <p>Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim.</p>
-              </div>
-            </div>
+            
           </div><!-- End Features Grid -->
         </div><!-- End Why Choose Us -->
 

@@ -37,7 +37,7 @@ if (file_exists(app_path('Http/Controllers/LocalizationController.php')))
     // Route::get('/', function () { return view('pages.home'); });
     Route::get('/', [App\Http\Controllers\bookingController::class , 'home'])->name('home');
     Route::get('/about-us', function () { return view('pages.about'); });
-    Route::get('/gallery', [App\Http\Controllers\bookingController::class , 'galeri']);
+    Route::get('/transfer', [App\Http\Controllers\bookingController::class , 'transfer'])->name('transfer');
     Route::get('/events', [App\Http\Controllers\bookingController::class , 'event']);
     // Route::get('/contact_us', [App\Http\Controllers\ContactUsController::class , 'index']);
     

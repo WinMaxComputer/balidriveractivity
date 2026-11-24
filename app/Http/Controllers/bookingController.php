@@ -32,7 +32,7 @@ class bookingController extends Controller
     }
 
     public function tour(Request $request){
-        $perPage = $request->query('per_page', 6);
+        $perPage = $request->query('per_page', 100);
         $defaultLocale = config('app.locale');
         $products = DB::table('products')->where('lang', $defaultLocale)->orderBy('id', 'desc')->paginate($perPage);
         $defaultLocale = config('app.locale');
@@ -280,6 +280,15 @@ class bookingController extends Controller
             ] );
 
     }
+    public function transfer(){
+        $defaultLocale = config('app.locale');
+        // $hotel = Booking::where('bookings.lang', $defaultLocale)->get();
+
+        return view('pages.transfer',[
+            // 'hotelDetail' => $hotel,
+            ] );
+
+    }
 
     public function event(){
         $defaultLocale = config('app.locale');
@@ -380,7 +389,7 @@ class bookingController extends Controller
 
     public function getProduct(Request $request){
         $code = $request->code;
-        $data = DB::table('products')->where('product_code', $code)->first();
+        $data = DB::table('products')->where('code', $code)->first();
         
         return response()->json(['data' => $data ]);
     }

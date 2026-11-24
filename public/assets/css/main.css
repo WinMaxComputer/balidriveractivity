@@ -196,7 +196,7 @@ h6 {
 
 .header .header-container {
   background: var(--surface-color);
-  border-radius: 50px;
+  border-radius: 9px;
   padding: 5px 25px;
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
@@ -206,12 +206,12 @@ h6 {
 }
 
 .header .logo img {
-  max-height: 36px;
+  max-height: 52px;
   margin-right: 8px;
 }
 
 .header .logo h1 {
-  font-size: 24px;
+  font-size: 19px;
   margin: 0;
   font-weight: 600;
   padding-left: 5px;
@@ -736,6 +736,7 @@ h6 {
 @media screen and (max-width: 768px) {
   [data-aos-delay] {
     transition-delay: 0 !important;
+    margin-top: 5px;
   }
 }
 
@@ -795,7 +796,7 @@ section,
 .section {
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 60px 0;
+  padding: 6px 0;
   scroll-margin-top: 90px;
   overflow: clip;
 }
@@ -813,7 +814,7 @@ section,
 --------------------------------------------------------------*/
 .section-title {
   text-align: center;
-  padding-bottom: 60px;
+  padding-bottom: 4px;
   position: relative;
 }
 
@@ -881,7 +882,7 @@ section,
 }
 
 .travel-hero .hero-text .hero-title {
-  font-size: 3.5rem;
+  /* font-size: 3.5rem; */
   font-weight: 700;
   margin-bottom: 1.5rem;
   line-height: 1.2;
@@ -1125,7 +1126,7 @@ section,
 }
 
 .why-us .why-choose-section {
-  margin-top: 5rem;
+  margin-top: 0rem;
 }
 
 .why-us .why-choose-section h3 {
@@ -1153,7 +1154,7 @@ section,
 
 .why-us .feature-card {
   background: var(--surface-color);
-  padding: 2.5rem 1.5rem;
+  padding: 2.5px 1.5px;
   border-radius: 15px;
   text-align: center;
   height: 100%;
@@ -1588,11 +1589,11 @@ section,
 --------------------------------------------------------------*/
 .featured-tours .tour-card {
   background-color: var(--surface-color);
-  border-radius: 12px;
+  border-radius: 9px;
   overflow: hidden;
   box-shadow: 0 4px 20px color-mix(in srgb, var(--default-color), transparent 90%);
   transition: all 0.3s ease;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -1664,7 +1665,7 @@ section,
 }
 
 .featured-tours .tour-card .tour-content {
-  padding: 25px;
+  padding: 8px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -1686,7 +1687,7 @@ section,
 
 .featured-tours .tour-card .tour-content .tour-meta span {
   color: color-mix(in srgb, var(--default-color), transparent 30%);
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -1707,14 +1708,14 @@ section,
 .featured-tours .tour-card .tour-content .tour-highlights {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 25px;
+  gap: 1px;
+  margin-bottom: 7px;
 }
 
 .featured-tours .tour-card .tour-content .tour-highlights span {
   background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
   color: var(--accent-color);
-  padding: 4px 10px;
+  /* padding: 4px 10px; */
   border-radius: 15px;
   font-size: 12px;
   font-weight: 500;
@@ -4239,14 +4240,14 @@ section,
 
 .travel-tour-details .tour-overview .tour-highlights {
   background: var(--surface-color);
-  padding: 30px;
+  padding: 10px;
   border-radius: 15px;
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
 }
 
 .travel-tour-details .tour-overview .tour-highlights h3 {
   font-size: 1.3rem;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: var(--heading-color);
 }
 
@@ -4338,8 +4339,8 @@ section,
 
 .travel-tour-details .tour-itinerary .itinerary-item .day-content {
   background: var(--surface-color);
-  padding: 25px;
-  border-radius: 15px;
+  padding: 12px;
+  border-radius: 9px;
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
 }
 

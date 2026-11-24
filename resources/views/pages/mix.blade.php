@@ -148,7 +148,7 @@
                   <div class="tour-image">
                     @php $gmbr = explode(";",$prd->product_foto) ; @endphp
                     <img src="{{asset('assets/img/products/'.$gmbr[0] ) }}" alt="{{ $prd->product_name }}" class="img-fluid">
-                    <div class="tour-price">${{ $prd->price }} / Pax</div>
+                    <div class="tour-price">{{ session('currency', 'USD') }} {{ number_format(convertPrice($prd->price, session('currency', 'USD')), 0) }} / Pax</div>
                   </div>
                   <div class="tour-content">
                     <h4>{{ $prd->product_name }}</h4>
@@ -217,7 +217,7 @@
                       <p>Discover the mystical beauty of Bali with temple visits, volcano hiking, and pristine beaches.</p>
                       <div class="tour-meta">
                         <span class="duration"><i class="bi bi-clock"></i> 7 Days</span>
-                        <span class="price">From $899</span>
+                        <span class="price">{{ session('currency', 'USD') }} {{ number_format(convertPrice($prd->price, session('currency', 'USD')), 0) }}</span>
                       </div>
                       <a href="tour-details.html" class="btn btn-primary">View Details</a>
                     </div>

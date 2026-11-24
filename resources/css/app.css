@@ -9,3 +9,511 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.date-picker-field {
+    position: relative;
+}
+
+.date-picker-field .form-control {
+    padding-left: 2.75rem;
+}
+
+.date-picker-icon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    z-index: 2;
+    color: #e87524;
+    font-size: 1.1rem;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.date-picker-field .form-control:focus {
+    border-color: #e87524;
+    box-shadow: 0 0 0 0.2rem rgba(232, 117, 36, 0.18);
+}
+
+.why-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.why-benefits-grid .why-benefit-item {
+    min-width: 0;
+}
+
+.why-benefits-grid .feature-card {
+    height: 100%;
+    padding: 1.5rem 1rem;
+}
+
+.why-benefits-grid .feature-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+}
+
+.why-benefits-grid .feature-card h4 {
+    margin-bottom: 0.65rem;
+    font-size: 1.05rem;
+}
+
+.why-benefits-grid .feature-card p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.why-benefits-grid .why-benefit-item:nth-child(1) .feature-icon {
+    color: #0284c7;
+    background: #e0f2fe;
+}
+
+.why-benefits-grid .why-benefit-item:nth-child(2) .feature-icon {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+.why-benefits-grid .why-benefit-item:nth-child(3) .feature-icon {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+.why-benefits-grid .why-benefit-item:nth-child(4) .feature-icon {
+    color: #7c3aed;
+    background: #ede9fe;
+}
+
+.why-benefits-grid .why-benefit-item:nth-child(5) .feature-icon {
+    color: #e11d48;
+    background: #ffe4e6;
+}
+
+@media (max-width: 991.98px) {
+    .why-benefits-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .why-benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.flatpickr-calendar {
+    border: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.18);
+    overflow: hidden;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-weekdays,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    background: #e87524;
+    color: #fff;
+}
+
+.flatpickr-weekday {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover {
+    background: #e87524;
+    border-color: #e87524;
+}
+
+.booking-card-compact {
+    padding: 1.25rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.1);
+}
+
+.booking-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.booking-card-heading h4 {
+    margin: 0.15rem 0 0;
+    font-size: 1.2rem;
+}
+
+.booking-eyebrow {
+    color: #e87524;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.booking-card-icon {
+    color: #e87524;
+    font-size: 1.6rem;
+}
+
+.booking-form-compact .form-label {
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.booking-form-compact .form-control,
+.booking-form-compact .form-select {
+    min-height: 40px;
+}
+
+.booking-form-compact .price-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.75rem;
+    background: #fff7f0;
+}
+
+.booking-form-compact .price-display span {
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.booking-form-compact .price-display strong {
+    color: #e87524;
+    font-size: 1.1rem;
+}
+
+.booking-mobile-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 42px;
+    border: 0;
+    border-radius: 0.65rem;
+    background: #e87524;
+    color: #fff;
+    font-weight: 700;
+}
+
+.booking-check-btn,
+.booking-mobile-toggle {
+    background: #e87524;
+    border-color: #e87524;
+    color: #fff;
+}
+
+.booking-check-btn:hover,
+.booking-check-btn:focus,
+.booking-mobile-toggle:hover,
+.booking-mobile-toggle:focus {
+    background: #cf5f16;
+    border-color: #cf5f16;
+    color: #fff;
+}
+
+.booking-whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 40px;
+    margin-top: 0.65rem;
+    border: 1px solid #25d366;
+    border-radius: 0.65rem;
+    background: #25d366;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.booking-whatsapp-btn:hover,
+.booking-whatsapp-btn:focus {
+    border-color: #1da851;
+    background: #1da851;
+    color: #fff;
+}
+
+.tour-keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.tour-keyword-title {
+    margin-bottom: 0.85rem !important;
+    font-size: 1.15rem !important;
+}
+
+.tour-keyword-tags span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.tour-keyword-tags span i {
+    color: #e87524;
+    font-size: 0.85rem;
+}
+
+.itinerary-section .itinerary-timeline {
+    display: grid;
+    gap: 1rem;
+}
+
+.itinerary-section .itinerary-item {
+    margin-bottom: 0;
+}
+
+.itinerary-section .day-content {
+    min-height: 4rem;
+    padding: 1rem 1.15rem !important;
+    border-radius: 0.85rem !important;
+    background: #fff;
+    box-shadow: 0 0.5rem 1.25rem rgba(15, 23, 42, 0.06);
+}
+
+.itinerary-section .day-content p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.tour-inclusions .inclusion-panel {
+    height: 100%;
+    padding: 1.25rem 1.35rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0 0.5rem 1.25rem rgba(15, 23, 42, 0.05);
+}
+
+.tour-inclusions .inclusion-panel h3 {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    font-size: 1.1rem;
+}
+
+.tour-inclusions .inclusion-content {
+    color: #475569;
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.tour-inclusions .inclusion-content p {
+    margin-bottom: 0.65rem;
+}
+
+.tour-inclusions .inclusion-content p:last-child {
+    margin-bottom: 0;
+}
+
+.tour-inclusions .inclusion-content ul,
+.tour-inclusions .inclusion-content ol {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.tour-inclusions .included-section .inclusion-content li::marker {
+    color: #28a745;
+}
+
+.tour-inclusions .excluded-section .inclusion-content li::marker {
+    color: #dc3545;
+}
+
+.mobile-booking-price {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.75rem;
+    background: #fff7f0;
+}
+
+.mobile-booking-price span {
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.mobile-booking-price strong {
+    color: #e87524;
+    font-size: 1.1rem;
+}
+
+.booking-mobile-toggle:hover {
+    background: #cf5f16;
+}
+
+@media (max-width: 991.98px) {
+    .mobile-booking-price {
+        display: flex;
+    }
+
+    .booking-card-compact.is-open .mobile-booking-price {
+        display: none;
+    }
+
+    .booking-form-compact {
+        display: none;
+    }
+
+    .booking-form-compact.is-visible {
+        display: block;
+    }
+
+    .booking-mobile-toggle {
+        position: fixed;
+        right: 1rem;
+        bottom: 6.5rem;
+        left: 1rem;
+        z-index: 1030;
+        display: flex;
+        width: auto;
+        margin-top: 0;
+        box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.22);
+    }
+
+    .booking-mobile-toggle.is-hidden {
+        display: none;
+    }
+}
+
+@media (min-width: 992px) {
+    .tour-overview > .row {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+        align-items: start;
+        row-gap: 0;
+    }
+
+    .tour-overview > .row > .col-lg-8 {
+        width: auto;
+        grid-column: 1;
+    }
+
+    .tour-overview > .row > .booking-sidebar {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        width: auto;
+    }
+
+    .booking-sidebar {
+        position: relative;
+        height: auto;
+        align-self: stretch;
+        z-index: 10;
+    }
+
+    .booking-sidebar > .tour-highlights {
+        width: 100%;
+    }
+
+    .booking-sidebar.booking-is-fixed > .tour-highlights {
+        position: fixed;
+        top: 6rem;
+        z-index: 20;
+    }
+
+    .booking-sidebar.booking-is-bottom > .tour-highlights {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+}
+
+.tour-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.tour-benefits-grid .date-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 8rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.75rem;
+    background: #fff;
+    text-align: center;
+}
+
+.tour-benefits-grid .date-option > i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    font-size: 1.1rem;
+}
+
+.tour-benefits-grid .date {
+    color: #1e293b;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.tour-benefits-grid .availability {
+    color: #64748b;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.benefit-low-price > i {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+.benefit-local-guide > i {
+    color: #0284c7;
+    background: #e0f2fe;
+}
+
+.benefit-flexible > i {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+.benefit-cancellation > i {
+    color: #7c3aed;
+    background: #ede9fe;
+}
+
+@media (max-width: 576px) {
+    .tour-benefits-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tour-benefits-grid .date-option {
+        min-height: 7rem;
+        padding: 0.75rem 0.5rem;
+    }
+}

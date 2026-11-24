@@ -1,13 +1,13 @@
 @extends('layouts.default')
 @section('meta')
-    <title>Bali Packages Tour- Bali Driver Activities</title>
+    <title>Bali Packages Tour- BALI SCENIC</title>
     <meta content="package tour bali withh private service, best package tour in bali" name="description">
     <meta content="tour bali, package tour, bali driver, private driver" name="keywords">
 @endsection
 @section('content')
 
     <!-- Page Title -->
-    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/travel/showcase-8.webp);">
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/banner/{{ $banner ?? 'act.webp' }});">
       <div class="container position-relative">
         <h1>Find Your Perfect Tour</h1>
         <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
@@ -72,78 +72,84 @@
         </div> -->
 
         <!-- Tour Categories -->
-        <div class="row mb-5" data-aos="fade-up" data-aos-delay="400">
+        <div class="row mb-5" data-aos="fade-up" data-aos-delay="300">
           <div class="col-12">
-            <h3 class="section-subtitle mb-4">Browse by Category</h3>
-            <div class="row">
-              <div class="col-lg-2 col-md-4 col-6 mb-3">
-                <div class="category-card">
-                  <div class="category-icon">
-                    <i class="bi bi-compass"></i>
-                  </div>
-                  <h5>Adventure</h5>
-                </div>
-              </div>
-              <div class="col-lg-2 col-md-4 col-6 mb-3">
-                <div class="category-card">
-                  <div class="category-icon">
-                    <i class="bi bi-gem"></i>
-                  </div>
-                  <h5>Luxury</h5>
-                </div>
-              </div>
-              <div class="col-lg-2 col-md-4 col-6 mb-3">
-                <div class="category-card">
-                  <div class="category-icon">
-                    <i class="bi bi-people"></i>
-                  </div>
-                  <h5>Family</h5>
-                </div>
-              </div>
-              <div class="col-lg-2 col-md-4 col-6 mb-3">
-                <div class="category-card">
-                  <div class="category-icon">
-                    <i class="bi bi-palette"></i>
-                  </div>
-                  <h5>Cultural</h5>
-                </div>
-              </div>
-              <div class="col-lg-2 col-md-4 col-6 mb-3">
-                <div class="category-card">
-                  <div class="category-icon">
-                    <i class="bi bi-sun"></i>
-                  </div>
-                  <h5>Beach</h5>
-                </div>
-              </div>
-              <div class="col-lg-2 col-md-4 col-6 mb-3">
-                <div class="category-card">
-                  <div class="category-icon">
-                    <i class="bi bi-building"></i>
-                  </div>
-                  <h5>City</h5>
-                </div>
-              </div>
+            <h3 class="section-subtitle mb-4">Tour Categories</h3>
+            <div class="tour-categories d-flex flex-wrap gap-3">
+              <a href="#" class="tour-category">Adventure</a>
+              <a href="#" class="tour-category">Cultural</a>
+              <a href="#" class="tour-category">Luxury</a>
+              <a href="#" class="tour-category">Family</a>
+              <a href="#" class="tour-category">Beach</a>
+              <a href="#" class="tour-category">Wildlife</a>
+              <a href="#" class="tour-category">Cruise</a>
+              <a href="#" class="tour-category">Hiking</a>
             </div>
           </div>
         </div>
 
         <!-- Tour Grid -->
+        <style>
+          .mix-tour-grid .tour-card .tour-image img {
+            height: 180px;
+          }
+
+          .mix-tour-grid .tour-card .tour-image .tour-price {
+            right: 0.75rem;
+            bottom: 0.75rem;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.9rem;
+          }
+
+          .mix-tour-grid .tour-card .tour-content {
+            padding: 1rem;
+          }
+
+          .mix-tour-grid .tour-card .tour-content h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+          }
+
+          .mix-tour-grid .tour-card .tour-content p {
+            margin-bottom: 0.75rem;
+            font-size: 0.88rem;
+            line-height: 1.45;
+          }
+
+          .mix-tour-grid .tour-card .tour-content .tour-details {
+            margin-bottom: 0.75rem;
+            font-size: 0.76rem;
+          }
+
+          .mix-tour-grid .tour-card .tour-content .tour-details span {
+            gap: 0.25rem;
+          }
+
+          .mix-tour-grid .tour-card .tour-content .tour-details span i {
+            margin-right: 0.15rem;
+          }
+
+          .mix-tour-grid .tour-card .tour-content .btn {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.82rem;
+          }
+        </style>
+
         <div class="row" data-aos="fade-up" data-aos-delay="600">
           <div class="col-12">
             <h3 class="section-subtitle mb-4">All Mix Tours</h3>
-            <div class="row">
+            <div class="row mix-tour-grid">
               @foreach ($product as $prd)
-              <div class="col-lg-4 col-md-6 mb-4">
+              <div class="col-lg-3 col-md-4 mb-3">
                 <div class="tour-card">
                   <div class="tour-image">
                     @php $gmbr = explode(";",$prd->product_foto) ; @endphp
                     <img src="{{asset('assets/img/products/'.$gmbr[0] ) }}" alt="{{ $prd->product_name }}" class="img-fluid">
-                    <div class="tour-price">${{ $prd->price }} / Pax</div>
+                    <div class="tour-price">{{ session('currency', 'USD') }} {{ number_format(convertPrice($prd->price, session('currency', 'USD')), 0) }} / Pax</div>
                   </div>
                   <div class="tour-content">
                     <h4>{{ $prd->product_name }}</h4>
-                    <p>{!! substr($prd->product_des, 0, 60) !!}</p>
+                    <!-- <p>{!! substr($prd->product_des, 0, 60) !!}</p> -->
                     <div class="tour-details">
                       <span><i class="bi bi-clock"></i> 6 Days</span>
                       <span><i class="bi bi-star-fill"></i> 4.8 (124 reviews)</span>

@@ -24,11 +24,11 @@
           <div class="form-group col-lg-6">
             <label>Code</label>
             <input type="hidden" name="id" class="form-control" placeholder="code" value="{{ $productsDetail->id ?? '' }}" >
-            <input type="text" name="product_code" class="form-control" placeholder="product_code" value="{{ $productsDetail->product_code ?? '' }}" required>
+            <input type="text" name="code" class="form-control" placeholder="code" value="{{ $productsDetail->code ?? '' }}" required>
           </div>
           <div class="form-group col-lg-6">
               <label>Name</label>
-              <input type="text" name="product_name" class="form-control" placeholder="product_name" value="{{ $productsDetail->product_name ?? '' }}">
+              <input type="text" name="product_name" id="product_name" class="form-control" placeholder="product_name" value="{{ $productsDetail->product_name ?? '' }}">
           </div>
         </div>
         <div class="row">
@@ -47,6 +47,10 @@
           </div>
         </div>
         <div class="row">
+          <div class="form-group col-lg-6">
+              <label>Slug</label>
+              <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug" value="{{ $productsDetail->slug ?? '' }}">
+          </div>
           <div class="form-group col-lg-6">
               <label>Meta Keyword</label>
               <input class="form-control" id="meta_keyword" name="meta_keyword" value="{{ $productsDetail->meta_keyword ?? '' }}">
@@ -211,6 +215,25 @@
     CKEDITOR.replace('product_des', options);
     CKEDITOR.replace('product_included', options);
     CKEDITOR.replace('product_excluded', options);
+
+    // Function to generate slug from name
+    function generateSlug(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove invalid chars
+            .replace(/[\s_-]+/g, '-')    // Collapse whitespace and replace by -
+            .replace(/^-+|-+$/g, '');    // Remove dashes from start and end
+    }
+
+    // Listen for changes on the name input to auto-generate slug
+    $('#product_name').on('keyup', function() {
+        @if(!isset($productsDetail))
+        const name = $(this).val();
+        const slug = generateSlug(name);
+        $('#slug').val(slug);
+        @endif
+    });
 
 
     var uploadedDocumentMap = {}

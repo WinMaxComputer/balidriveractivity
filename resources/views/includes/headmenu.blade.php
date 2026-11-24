@@ -3,19 +3,17 @@
 
       <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename">Tour</h1>
+        <img src="{{ asset('assets/img/logo.webp') }}" alt="">
+        <h1 class="sitename">BALI SCENIC</h1>
       </a>
       
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="/" class="active">Home</a></li>
-          <li><a href="/activities">{{ __('headmenu.tour_activity') }}</a></li>
-          <li><a href="/destinations">{{ __('headmenu.destinations') }}</a></li>
+          <!-- <li><a href="/activities">{{ __('headmenu.tour_activity') }}</a></li>
+          <li><a href="/destinations">{{ __('headmenu.destinations') }}</a></li> -->
           <li><a href="/tour_packages">{{ __('headmenu.tour_package') }}</a></li>
-          <li><a href="/gallery">{{ __('headmenu.gallery') }}</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/contact">{{ __('headmenu.contact') }}</a></li>
+          <li><a href="/transfer">BOOK AIRPORT TRANSFER</a></li>
           <li class="dropdown">
             <a href="#"><span>{{ session('currency', 'USD') }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
@@ -82,7 +80,10 @@
                   <div class="col-md-6">
                     <div class="form-group mb-3">
                       <label for="checkin">Date</label>
-                      <input type="date" name="checkin" id="checkin" class="form-control" required="">
+                      <div class="date-picker-field">
+                        <i class="bi bi-calendar-heart-fill date-picker-icon" aria-hidden="true"></i>
+                        <input type="text" name="checkin" id="checkin" class="form-control" data-datepicker placeholder="Choose a date" autocomplete="off" required>
+                      </div>
                     </div>
                   </div>
                   <div class="col-md-6">

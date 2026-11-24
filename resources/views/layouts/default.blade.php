@@ -49,13 +49,13 @@
   @elseif (Route::is('service'))
     @include('includes.headmenudetail', ['banner' => '3.webp' ?? null, 'judul' => 'Our Services' ?? null])
   @elseif (Route::is('destinations') || Route::is('destinations.detail'))
-    @include('includes.headmenudetail', ['banner' => '4.webp' ?? null, 'judul' => 'Bali Destinations' ?? null])
-  @elseif (Route::is('activities') || Route::is('activity-detail'))
-    @include('includes.headmenudetail', ['banner' => 'ubud.webp' ?? null, 'judul' => 'Bali Activities' ?? null])
+    @include('includes.headmenudetail', ['banner' => '1.webp' ?? null, 'judul' => 'Bali Destinations' ?? null])
+  @elseif (Route::is('activities') || Route::is('activities.detail'))
+    @include('includes.headmenudetail', ['banner' => '1.webp' ?? null, 'judul' => 'Bali Activities' ?? null])
   @elseif (Route::is('tour_packages') || Route::is('tour_packages.detail') || Route::is('mix_packages.detail'))
-    @include('includes.headmenudetail', ['banner' => '4.webp' ?? null, 'judul' => 'Project Detail' ?? null])
-  @elseif (Route::is('contact'))
-    @include('includes.headmenudetail', ['banner' => '5.webp' ?? null, 'judul' => 'Contact us' ?? null])
+    @include('includes.headmenudetail', ['banner' => '1.webp' ?? null, 'judul' => 'Mix Packages' ?? null])
+  @elseif (Route::is('transfer'))
+    @include('includes.headmenudetail', ['banner' => '5.webp' ?? null, 'judul' => 'Airport Transfer' ?? null])
   @endif 
 
   <main id="main">

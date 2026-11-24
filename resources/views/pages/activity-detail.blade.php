@@ -1,4 +1,3 @@
-@extends('layouts.default')
 <?php
     $url = $_SERVER['REQUEST_URI'];
     $ur = explode('/', $url);
@@ -20,31 +19,32 @@
     @endphp
 @endif
 
+@extends('layouts.default')
 @section('meta')
-    <title>{{ $activityDetail[0]->name }} -The Swand</title>
+    <title>{{ $activityDetail[0]->name }} - Bali Driver Activity</title>
     <meta content="{!! $activityDetail[0]->deskripsi !!}" name="description">
     <meta content="{{ $activityDetail[0]->slug }}" name="keywords">
 @endsection
-@section('content')
+
+
 @php 
 $des = $activityDetail[0]->deskripsi ; 
 $desk = explode("</p>", $des) ;
 @endphp
-    
-    <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs">
-      <div class="container">
-
-        <div class="d-flex justify-content-between align-items-center">
-          <h2>Activity Detail</h2>
+@section('content')   
+    <!-- Page Title -->
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/travel/showcase-8.webp);">
+      <div class="container position-relative">
+        <h1>Tour Details</h1>
+        <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
+        <nav class="breadcrumbs">
           <ol>
-            <li><a href="/">Home</a></li>
-            <li>{{ $activityDetail[0]->name }}</li>
+            <li><a href="index.html">Home</a></li>
+            <li class="current">Tour Details</li>
           </ol>
-        </div>
-
+        </nav>
       </div>
-    </div><!-- End Breadcrumbs -->
+    </div><!-- End Page Title -->
 
     <!-- ======= About Section ======= -->
     <section id="about" class="about">
@@ -61,40 +61,297 @@ $desk = explode("</p>", $des) ;
                 <div class="col-lg-6 position-relative mt-0" data-aos="fade-up" data-aos-delay="150">
                     <p>{!! $desk[0] !!}</p>
                 </div>
-                <div class="col-lg-6 position-relative about-img mt-0" data-aos="fade-up" data-aos-delay="150">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                        <ol class="carousel-indicators">
+                @php
+                    $activityPhotos = [];
+                    if (!empty($activityDetail[0]->foto)) {
+                        $activityPhotos = array_values(array_filter(array_map('trim', explode(';', $activityDetail[0]->foto))));
+                    }
+                    if (empty($activityPhotos)) {
+                        $activityPhotos = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
+                    }
+                    $featuredActivityPhotos = array_slice($activityPhotos, 0, 5);
+                @endphp
 
-                        @php $gmbra = explode(";",$activityDetail[0]->foto) ; @endphp
-                        @php $gmbr = array_slice($gmbra, 0, -1) ; @endphp
-                        @foreach($gmbr as $value)
-                        <li data-target=".carouselExampleCaptions" data-slide-to="{{ $loop->index }}" class="{{ $loop->first ? 'active' : '' }}"></li>
+                <div class="col-lg-6 position-relative about-img mt-0" data-aos="fade-up" data-aos-delay="150">
+                    <style>
+                        .activity-gallery-showcase {
+                            display: grid;
+                            grid-template-columns: 1.8fr 1fr 1fr;
+                            grid-template-rows: repeat(2, 150px);
+                            gap: 12px;
+                            max-width: 100%;
+                            margin: 0 auto;
+                        }
+
+                        .activity-gallery-item {
+                            position: relative;
+                            overflow: hidden;
+                            border-radius: 20px;
+                            box-shadow: 0 18px 35px rgba(17, 24, 39, 0.12);
+                            background: #f2f2f2;
+                            cursor: pointer;
+                        }
+
+                        .activity-gallery-item img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            display: block;
+                            transition: transform 0.35s ease;
+                        }
+
+                        .activity-gallery-item:hover img {
+                            transform: scale(1.05);
+                        }
+
+                        .activity-gallery-item.featured {
+                            grid-row: span 2;
+                        }
+
+                        .activity-gallery-overlay {
+                            position: absolute;
+                            inset: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: rgba(15, 23, 42, 0.45);
+                            color: #fff;
+                            font-size: 1.15rem;
+                            font-weight: 700;
+                            letter-spacing: 0.04em;
+                        }
+
+                        .activity-gallery-lightbox {
+                            position: fixed;
+                            inset: 0;
+                            background: rgba(15, 23, 42, 0.85);
+                            display: none;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 9999;
+                            padding: 24px;
+                        }
+
+                        .activity-gallery-lightbox.active {
+                            display: flex;
+                        }
+
+                        .activity-gallery-lightbox img {
+                            max-width: 90vw;
+                            max-height: 85vh;
+                            border-radius: 18px;
+                            object-fit: contain;
+                            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+                            background: #fff;
+                        }
+
+                        .activity-gallery-close {
+                            position: absolute;
+                            top: 18px;
+                            right: 22px;
+                            font-size: 2.2rem;
+                            color: #fff;
+                            cursor: pointer;
+                            line-height: 1;
+                        }
+
+                        .activity-gallery-nav-btn {
+                            position: absolute;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            width: 48px;
+                            height: 48px;
+                            border: none;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.2);
+                            color: #fff;
+                            font-size: 2rem;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            backdrop-filter: blur(4px);
+                            transition: background 0.2s ease;
+                        }
+
+                        .activity-gallery-nav-btn:hover {
+                            background: rgba(255, 255, 255, 0.35);
+                        }
+
+                        .activity-gallery-nav-prev {
+                            left: 24px;
+                        }
+
+                        .activity-gallery-nav-next {
+                            right: 24px;
+                        }
+
+                        @media (max-width: 768px) {
+                            .activity-gallery-showcase {
+                                grid-template-columns: 1fr 1fr;
+                                grid-template-rows: auto;
+                            }
+
+                            .activity-gallery-item.featured {
+                                grid-column: span 2;
+                                grid-row: auto;
+                                min-height: 260px;
+                            }
+
+                            .activity-gallery-nav-btn {
+                                width: 42px;
+                                height: 42px;
+                                font-size: 1.5rem;
+                            }
+                        }
+                    </style>
+
+                    <div class="activity-gallery-showcase" id="activityGalleryShowcase">
+                        @foreach($featuredActivityPhotos as $index => $photo)
+                            @php
+                                $photoPath = asset('assets/img/activity/' . $photo);
+                                $showOverlay = $index === 4 && count($activityPhotos) > 5;
+                            @endphp
+
+                            <div class="activity-gallery-item {{ $index === 0 ? 'featured' : '' }}" data-image="{{ $photoPath }}" data-index="{{ $index }}" aria-label="Open activity photo {{ $index + 1 }}">
+                                <img src="{{ $photoPath }}" alt="Activity photo {{ $index + 1 }}">
+                                @if ($showOverlay)
+                                    <div class="activity-gallery-overlay">+{{ count($activityPhotos) - 5 }} Foto</div>
+                                @endif
+                            </div>
                         @endforeach
-                        <!-- <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li> -->
-                        
-                        </ol>
-                        <div class="carousel-inner">
-                        @foreach($gmbr as $key => $slider)
-                        <!-- {{ $key }} -->
-                        <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
-                            <img src="{{ asset('assets/img/activity/'. $slider) }}" class="d-block w-100" alt="$slider">
-                        </div>
-                        @endforeach
-                        </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                        </a>
                     </div>
-                    
+
+                    <div class="activity-gallery-lightbox" id="activityGalleryLightbox" aria-label="Activity photo preview">
+                        <span class="activity-gallery-close" id="activityGalleryClose" aria-label="Close gallery">&times;</span>
+                        <button class="activity-gallery-nav-btn activity-gallery-nav-prev" id="activityGalleryPrevBtn" type="button" aria-label="Previous photo">&#8249;</button>
+                        <img id="activityGalleryLightboxImage" src="" alt="Full size activity image">
+                        <button class="activity-gallery-nav-btn activity-gallery-nav-next" id="activityGalleryNextBtn" type="button" aria-label="Next photo">&#8250;</button>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const modal = document.getElementById('activityGalleryLightbox');
+                            const modalImage = document.getElementById('activityGalleryLightboxImage');
+                            const closeBtn = document.getElementById('activityGalleryClose');
+                            const prevBtn = document.getElementById('activityGalleryPrevBtn');
+                            const nextBtn = document.getElementById('activityGalleryNextBtn');
+                            const items = Array.from(document.querySelectorAll('.activity-gallery-item'));
+                            let currentIndex = 0;
+
+                            function openLightbox(index) {
+                                if (!items.length) return;
+                                currentIndex = index;
+                                modalImage.src = items[currentIndex].getAttribute('data-image');
+                                modal.classList.add('active');
+                            }
+
+                            function closeLightbox() {
+                                modal.classList.remove('active');
+                                modalImage.src = '';
+                            }
+
+                            function showNext() {
+                                if (!items.length) return;
+                                currentIndex = (currentIndex + 1) % items.length;
+                                modalImage.src = items[currentIndex].getAttribute('data-image');
+                            }
+
+                            function showPrev() {
+                                if (!items.length) return;
+                                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                                modalImage.src = items[currentIndex].getAttribute('data-image');
+                            }
+
+                            items.forEach(function (item, index) {
+                                item.addEventListener('click', function () {
+                                    openLightbox(index);
+                                });
+                            });
+
+                            closeBtn.addEventListener('click', closeLightbox);
+                            prevBtn.addEventListener('click', showPrev);
+                            nextBtn.addEventListener('click', showNext);
+
+                            modal.addEventListener('click', function (event) {
+                                if (event.target === modal) {
+                                    closeLightbox();
+                                }
+                            });
+
+                            document.addEventListener('keydown', function (event) {
+                                if (!modal.classList.contains('active')) return;
+
+                                if (event.key === 'Escape') {
+                                    closeLightbox();
+                                }
+
+                                if (event.key === 'ArrowRight') {
+                                    showNext();
+                                }
+
+                                if (event.key === 'ArrowLeft') {
+                                    showPrev();
+                                }
+                            });
+                        });
+                    </script>
                 </div>
-                <div class="row mt-0">
+                </div>
+
+                <style>
+                    .activity-products {
+                        margin-top: 32px;
+                    }
+
+                    .activity-product-card {
+                        width: 100%;
+                        height: 100%;
+                        padding-bottom: 18px;
+                        overflow: hidden;
+                    }
+
+                    .activity-product-card .member-img {
+                        height: 180px;
+                        overflow: hidden;
+                    }
+
+                    .activity-product-card .member-img img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    .activity-product-card .member-info {
+                        padding: 16px 18px 4px;
+                    }
+
+                    .activity-product-card .member-info h4 {
+                        margin-bottom: 8px;
+                        font-size: 1.05rem;
+                    }
+
+                    .activity-product-card .member-info p {
+                        margin-bottom: 0;
+                        font-size: 0.9rem;
+                        line-height: 1.55;
+                    }
+
+                    .activity-product-card .price {
+                        margin: 8px 18px 14px;
+                    }
+
+                    .activity-product-card .activity-booking {
+                        width: auto;
+                        margin: 0 18px;
+                    }
+
+                    .activity-product-card .activity-booking a {
+                        display: inline-block;
+                    }
+                </style>
+
+                <div class="row activity-products">
                 @php $code = $activityDetail[0]->code ; @endphp
 
                 @foreach($products as $prod)
@@ -102,8 +359,8 @@ $desk = explode("</p>", $des) ;
                     @if(in_array($code, $pr))
 
                     <!-- Menu Item -->
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
-                        <div class="chef-member">
+                    <div class="col-xl-3 col-lg-4 col-md-6 d-flex align-items-stretch mb-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="chef-member activity-product-card">
                         <div class="member-img">
                             @php $gmbr = explode(";",$prod->product_foto) ; @endphp
                             @php $desa = explode("</p>", $prod->product_des) ; @endphp
@@ -117,8 +374,8 @@ $desk = explode("</p>", $des) ;
                             <p>{!! cutText($desa[0], 300, 1) !!}</p>
                         </div>
                         <p class="price">{{ number_format($prod->price) ; }}</p>
-                        <div class="col-5 form-group d-flex">
-                            <a href="#" class="btn-book-a-table" id="{{ $prod->product_code }}" onclick="bookNow(this)">book Now</a>
+                        <div class="form-group d-flex activity-booking">
+                            <a href="#" class="btn-book-a-table" id="{{ $prod->code }}" onclick="bookNow(this)">book Now</a>
                         </div>
                         </div>
                         
@@ -156,7 +413,7 @@ $desk = explode("</p>", $des) ;
                 <form cautocomplete="off" >
                     <div class="row">
                         <div class="col-xl-6 form-group">
-                            <input type="hidden" name="code" class="form-control" id="code" value="{{ $prod->product_code }}">
+                            <input type="hidden" name="code" class="form-control" id="code" value="{{ $prod->code }}">
                         <input type="text" name="name_act" class="form-control" id="name_act" placeholder="Name" required>
                         </div>
                             <div class="col-xl-6 form-group">

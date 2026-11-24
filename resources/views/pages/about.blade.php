@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('meta')
-    <title>The Swand - About US</title>
+    <title>Bali Driver Activity - About US</title>
     <meta content="We are company that manage property and also rent for acomodation." name="description">
     <meta content="room booking, manage hotel, manage villa, transport, travel, tour" name="keywords">
 @endsection

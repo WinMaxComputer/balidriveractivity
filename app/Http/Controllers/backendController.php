@@ -477,7 +477,7 @@ class backendController extends Controller
                 $desti = implode(';', $data['destination']);
                 $project = DB::table('products')->upsert([
                     'id' => $data['id'],
-                    'product_code' => $data['product_code'],
+                    'code' => $data['code'],
                     'product_des' => $data['product_des'],
                     'itinerary' => implode(';', $data['itinerary']),
                     'product_included' => $data['product_included'],

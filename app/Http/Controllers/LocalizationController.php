@@ -18,14 +18,19 @@ class LocalizationController extends Controller
         $slug = $request->slug ;
         App::setLocale($locale);
         Session::put('locale', $locale);
+        if($tabel == 'mix-detail'){
+            $tabeldata = 'products';
+        }else{
+            $tabeldata = $tabel;
+        }
 
         if($slug == '' ){
             return redirect()->back();
-        }else{
+        }else {
 
 
-            $kode = DB::table($tabel)->where('slug', $slug)->first();
-            $data = DB::table($tabel)->where('code', $kode->code)->where('lang', $locale)->first();
+            $kode = DB::table($tabeldata)->where('slug', $slug)->first();
+            $data = DB::table($tabeldata)->where('code', $kode->code)->where('lang', $locale)->first();
             if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'){
                 $url = "https://";   
             }else{  

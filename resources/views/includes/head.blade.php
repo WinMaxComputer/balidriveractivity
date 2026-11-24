@@ -1,8 +1,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Tour Bootstrap Template</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <!-- <title>Index - Tour Bootstrap Template</title> -->
+  <!-- <meta name="description" content=""> -->
+  <!-- <meta name="keywords" content=""> -->
 
   <!-- Favicons -->
   <link href="{{asset('assets/img/favicon.png')}}" rel="icon">
@@ -22,6 +22,8 @@
 
   <!-- Main CSS File -->
   <link href="{{asset('assets/css/main.css')}}" rel="stylesheet">
+
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
 
   <!-- =======================================================
   * Template Name: Tour

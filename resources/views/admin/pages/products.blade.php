@@ -49,7 +49,7 @@
             <tbody>
             @foreach ($products as $tur)
               <tr>
-                <td>{{$tur->product_code}}</td>
+                <td>{{$tur->code}}</td>
                 <td>{{$tur->product_name}}</td>
                 <td>
                   @foreach ($activities->where('lang', $tur->lang) as $activity)

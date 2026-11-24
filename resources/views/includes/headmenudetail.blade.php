@@ -3,20 +3,25 @@
 
       <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename">Tour</h1>
+        <img src="{{ asset('assets/img/logo.webp') }}" alt="">
+        <h1 class="sitename">BALI SCENIC</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="/" class="active">Home</a></li>
-          <li><a href="/activities">{{ __('headmenu.tour_activity') }}</a></li>
-          <li><a href="/destinations">{{ __('headmenu.destinations') }}</a></li>
+          <!-- <li><a href="/activities">{{ __('headmenu.tour_activity') }}</a></li>
+          <li><a href="/destinations">{{ __('headmenu.destinations') }}</a></li> -->
           <li><a href="/tour_packages">{{ __('headmenu.tour_package') }}</a></li>
-          <li><a href="/gallery">{{ __('headmenu.gallery') }}</a></li>
-          <li><a href="/blog">Blog</a></li>
           
-          <li><a href="/contact">{{ __('headmenu.contact') }}</a></li>
+          <li><a href="/transfer">BOOK AIRPORT TRANSFER</a></li>
+          <li class="dropdown">
+            <a href="#"><span>{{ session('currency', 'USD') }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="{!! route('currency', ['currency'=>'USD']) !!}">USD</a></li>
+              <li><a href="{!! route('currency', ['currency'=>'IDR']) !!}">IDR</a></li>
+            </ul>
+          </li>
           <li class="dropdown">
             <a href="#"><span>{{ strtoupper(Lang::locale()) }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
