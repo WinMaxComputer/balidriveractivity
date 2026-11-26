@@ -1,19 +1,3 @@
-<?php
-    $url = $_SERVER['REQUEST_URI'];
-    $ur = explode('/', $url);
-    $table = $ur[1];
-    $slug = $ur[2]; 
-?>
-@if(isset($destinationDetail))
-@php 
-    $destinationDetail = DB::table($table)->where('slug', $slug)
-                    ->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
-                    ->select('destinations.*', 'destination_fotos.foto')
-                    ->get(); 
-    $lang = $destinationDetail[0]->lang ;
-    App::setLocale($lang);
-@endphp
-@endif
 @php 
     $des = $destinationDetail[0]->deskripsi ; 
     $desk = explode("</p>", $des) ;
@@ -27,13 +11,13 @@
 @section('content')
 
     <!-- Page Title -->
-    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/travel/showcase-8.webp);">
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(/assets/img/travel/showcase-8.webp);">
       <div class="container position-relative">
         <h1>{{ $destinationDetail[0]->name }}</h1>
         <!-- <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p> -->
         <nav class="breadcrumbs">
           <ol>
-            <li><a href="/">Home</a></li>
+            <li><a href="{{ route('home') }}">Home</a></li>
             <li class="current">Destination Details</li>
           </ol>
         </nav>

@@ -128,7 +128,7 @@
                   <div class="member-img">
                     @php $gmbr = explode(";",$detail->foto) ; @endphp
                     
-                    <img src="assets/img/rooms/{{ $gmbr[1] }}" class="img-fluid" alt="">
+                    <img src="/assets/img/rooms/{{ $gmbr[1] }}" class="img-fluid" alt="">
                     
                     <div class="social">
                       <!-- <a href=""><i class="bi bi-twitter"></i></a>
@@ -216,7 +216,7 @@
                             
                             @foreach($gmbr as $key => $slider)
                             <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
-                              <img src="assets/img/rooms/{{ $slider }}" class="d-block w-100" alt="">
+                              <img src="/assets/img/rooms/{{ $slider }}" class="d-block w-100" alt="">
                             </div>
                             @endforeach
                             
@@ -273,7 +273,7 @@
                   <div class="member-img">
                     @php $gmbr = explode(";",$tr->foto) ; @endphp
                     
-                    <img src="assets/img/transport/{{ $gmbr[0] }}" class="img-fluid" alt="">
+                    <img src="/assets/img/transport/{{ $gmbr[0] }}" class="img-fluid" alt="">
                     {{ $gmbr[1] }}
                     
                     <div class="social">
@@ -311,7 +311,7 @@
                     <div >
                       <a href="https://api.whatsapp.com/send?phone=+62818688114&text=Halo" target="_blank" class="btn-book-a-table">
                       
-                      <img src="assets/img/wa.png" > Book Now </a>
+                      <img src="/assets/img/wa.png" > Book Now </a>
                     </div>
                   </p>
                   
@@ -338,7 +338,7 @@
                     <div class="member-img">
                       @php $gmbr = explode(";",$tur->foto) ; @endphp
                       
-                      <img src="assets/img/tour/{{ $gmbr[0] }}" class="img-fluid" alt="{{ $gmbr[0] }}">
+                      <img src="/assets/img/tour/{{ $gmbr[0] }}" class="img-fluid" alt="{{ $gmbr[0] }}">
                       
                       <div class="social">
                         <!-- <a href=""><i class="bi bi-twitter"></i></a>
@@ -369,7 +369,7 @@
                       <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#trModal{{$tr->id}}">
                         Detail
                       </button> -->
-                      <a href="/tour_packages/{{$tur->slug}}" class="btn-book-a-table">Detail</a>
+                      <a href="{{ route('tour_packages.detail', $tur->slug) }}" class="btn-book-a-table">Detail</a>
                     </p>
                     
                   </div>
@@ -390,7 +390,7 @@
             <div class="row gy-5">
             @foreach ($paket as $paket)
               <div class="col-lg-4 menu-item">
-                <a href="assets/img/menu/menu-item-1.png" class="glightbox"><img src="assets/img/menu/menu-item-1.png" class="menu-img img-fluid" alt=""></a>
+                <a href="/assets/img/menu/menu-item-1.png" class="glightbox"><img src="/assets/img/menu/menu-item-1.png" class="menu-img img-fluid" alt=""></a>
                 <h4>{{$paket->name}}</h4>
                 <p class="ingredients">
                   Lorem, deren, trataro, filede, nerada

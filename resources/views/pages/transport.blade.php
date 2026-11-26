@@ -13,7 +13,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <h2>Bali Car Rental</h2>
           <ol>
-            <li><a href="/">Home</a></li>
+            <li><a href="{{ route('home') }}">Home</a></li>
             <li>Car Rental</li>
           </ol>
         </div>
@@ -45,7 +45,7 @@
                 <div class="chef-member">
                   <div class="member-img">
                     @php $gmbr = explode(";",$tr->foto) ; @endphp
-                    <img src="assets/img/transport/{{ $gmbr[0] }}" class="img-fluid" alt="">
+                    <img src="/assets/img/transport/{{ $gmbr[0] }}" class="img-fluid" alt="">
                     <div class="social">
                     </div>
                   </div>
@@ -67,7 +67,7 @@
                     @endforeach
                     IDR {{ number_format($tr->harga, 2) }} for {{ $tr->waktu }} Hours
                     <a href="https://api.whatsapp.com/send?phone=+62818688114&text=Halo" target="_blank" class="btn-book-a-table">
-                      <img src="assets/img/wa.png" >Book Now</a>
+                      <img src="/assets/img/wa.png" >Book Now</a>
                   </div>
                 </div>
               </div><!-- End Chefs Member -->

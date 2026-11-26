@@ -20,77 +20,79 @@
 
       <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
+        @if ($errors->any())
+          <div class="alert alert-danger" role="alert">
+            <ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+          </div>
+        @endif
+        <input type="hidden" name="documents_present" value="1">
+        <input type="hidden" name="categories_present" value="1">
         <div class="row">
           <div class="form-group col-lg-6">
             <label>Code</label>
             <input type="hidden" name="id" class="form-control" placeholder="code" value="{{ $productsDetail->id ?? '' }}" >
-            <input type="text" name="code" class="form-control" placeholder="code" value="{{ $productsDetail->code ?? '' }}" required>
+            <input type="text" name="code" class="form-control" placeholder="code" value="{{ old('code', $productsDetail->code ?? '') }}" required>
           </div>
           <div class="form-group col-lg-6">
               <label>Name</label>
-              <input type="text" name="product_name" id="product_name" class="form-control" placeholder="product_name" value="{{ $productsDetail->product_name ?? '' }}">
+              <input type="text" name="product_name" id="product_name" class="form-control" placeholder="product_name" value="{{ old('product_name', $productsDetail->product_name ?? '') }}" required>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-lg-6">
             <label>Price</label>
-            <input type="number" name="price" class="form-control" placeholder="Price" value="{{ $productsDetail->price ?? '' }}" required>
+            <input type="number" name="price" class="form-control" placeholder="Price" value="{{ old('price', $productsDetail->price ?? '') }}" required>
           </div>
           
           <div class="form-group col-lg-6">
               <label>Lang</label>
               <select name="lang" class="form-control" style="background-color: #000; color: #fff;" required>
 
-                <option value="en" {{ (isset($productsDetail) && $productsDetail->lang === 'en') || !isset($productsDetail) ? 'selected' : '' }}>English</option>
-                <option value="id" {{ (isset($productsDetail) && $productsDetail->lang === 'id') || !isset($productsDetail) ? 'selected' : '' }}>Indonesia</option>
+                <option value="en" @selected(old('lang', $productsDetail->lang ?? 'en') === 'en')>English</option>
+                <option value="id" @selected(old('lang', $productsDetail->lang ?? 'en') === 'id')>Indonesia</option>
               </select>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-lg-6">
               <label>Slug</label>
-              <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug" value="{{ $productsDetail->slug ?? '' }}">
+              <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug" value="{{ old('slug', $productsDetail->slug ?? '') }}">
           </div>
           <div class="form-group col-lg-6">
               <label>Meta Keyword</label>
-              <input class="form-control" id="meta_keyword" name="meta_keyword" value="{{ $productsDetail->meta_keyword ?? '' }}">
+              <input class="form-control" id="meta_keyword" name="meta_keyword" value="{{ old('meta_keyword', $productsDetail->meta_keyword ?? '') }}">
           </div>
           <div class="form-group col-lg-6">
               <label>Meta Description</label>
-              <input class="form-control" id="meta_description" name="meta_description" value="{{ $productsDetail->meta_description ?? '' }}">
+              <input class="form-control" id="meta_description" name="meta_description" value="{{ old('meta_description', $productsDetail->meta_description ?? '') }}">
           </div>
         </div>
         <div class="form-group">
             <label>Des</label>
-            <textarea class="form-control" id="product_des" name="product_des" >{{ $productsDetail->product_des ?? '' }}</textarea>
+            <textarea class="form-control" id="product_des" name="product_des" >{{ old('product_des', $productsDetail->product_des ?? '') }}</textarea>
         </div>
         <div class="form-group">
           <label>Itinerary</label>
+          <p>Choose an activity or destination for each stop and optionally add a note. Selected stops are added to the product categories.</p>
+          <p id="itinerary-category-message" role="status"></p>
+          @php
+            $rows = collect(old('itinerary', $itineraryItems))->filter(fn ($row) => is_array($row))
+              ->map(fn ($row) => [
+                'reference' => is_string($row['reference'] ?? null) ? $row['reference'] : '',
+                'note' => is_string($row['note'] ?? null) ? $row['note'] : '',
+              ])->values()->all();
+            if (empty($rows)) $rows = [['reference' => '', 'note' => '']];
+            $knownReferences = $activities->map(fn ($activity) => 'activity:'.$activity->id)
+              ->merge($destinasi->map(fn ($destination) => 'destination:'.$destination->id));
+          @endphp
           <div id="itinerary-container">
-            @if(isset($productsDetail) && !empty($productsDetail->itinerary))
-            @php $itineraryItems = explode(";", $productsDetail->itinerary); @endphp
-            @foreach($itineraryItems as $item)
-              <div class="itinerary-item row mb-2">
-                <div class="col-lg-11">
-                  <textarea class="form-control" name="itinerary[]" placeholder="Day...">{{ $item }}</textarea>
-                </div>
-                <div class="col-lg-1">
-                  <button type="button" class="btn btn-sm btn-danger remove-itinerary">-</button>
-                </div>
-              </div>
+            @foreach($rows as $index => $item)
+              @include('admin.includes.product-itinerary-row', ['index' => $index, 'item' => $item])
             @endforeach
-          @endif
-            @if(!isset($productsDetail) || empty($productsDetail->itinerary))
-              <div class="itinerary-item row mb-2">
-                <div class="col-lg-11">
-                  <textarea class="form-control" name="itinerary[]" placeholder="Day..."></textarea>
-                </div>
-                <div class="col-lg-1">
-                  <button type="button" class="btn btn-sm btn-danger remove-itinerary">-</button>
-                </div>
-              </div>
-            @endif
           </div>
+          <template id="itinerary-template">
+            @include('admin.includes.product-itinerary-row', ['index' => '__INDEX__', 'item' => ['reference' => '', 'note' => '']])
+          </template>
           <button type="button" class="btn btn-sm btn-success" id="add-itinerary">+ Add Itinerary</button>
         </div>
         
@@ -98,10 +100,37 @@
         <script>
           
         $(document).ready(function() {
+          if ($('#itinerary-container').data('initialized')) return;
+          $('#itinerary-container').data('initialized', true);
+          var nextIndex = {{ count($rows) }};
           $('#add-itinerary').click(function() {
-            var newItem = '<div class="itinerary-item row mb-2"><div class="col-lg-11"><textarea class="form-control" name="itinerary[]" placeholder="Day..."></textarea></div><div class="col-lg-1"><button type="button" class="btn btn-sm btn-danger remove-itinerary">-</button></div></div>';
+            var newItem = $('#itinerary-template').html().replace(/__INDEX__/g, nextIndex++);
             $('#itinerary-container').append(newItem);
             updateRemoveButtons();
+          });
+
+          function syncItineraryCategory(select) {
+            var option = select.options[select.selectedIndex];
+            var name = option.dataset.type === 'activity' ? 'parent_type[]' : 'destination[]';
+            if (!option.dataset.code) return;
+            $('input[type="checkbox"]').filter(function() {
+              return this.name === name && this.value === option.dataset.code;
+            }).prop('checked', true);
+          }
+          $(document).on('change', '.itinerary-reference', function() { syncItineraryCategory(this); });
+          $('.itinerary-reference').each(function() { syncItineraryCategory(this); });
+          $(document).on('change', 'input[name="parent_type[]"], input[name="destination[]"]', function() {
+            if (this.checked) return;
+            var checkbox = this;
+            var referenced = $('.itinerary-reference').toArray().some(function(select) {
+              var option = select.options[select.selectedIndex];
+              var name = option.dataset.type === 'activity' ? 'parent_type[]' : 'destination[]';
+              return name === checkbox.name && option.dataset.code === checkbox.value;
+            });
+            if (referenced) {
+              this.checked = true;
+              $('#itinerary-category-message').text('Remove the itinerary stop before unchecking its category.');
+            }
           });
           
           $(document).on('click', '.remove-itinerary', function(e) {
@@ -124,70 +153,40 @@
         <div class="row">
           <div class="form-group col-lg-6">
               <label>Included</label>
-              <textarea class="form-control" id="product_included" name="product_included" >{{ $productsDetail->product_included ?? '' }}</textarea>
+              <textarea class="form-control" id="product_included" name="product_included" >{{ old('product_included', $productsDetail->product_included ?? '') }}</textarea>
           </div>
           <div class="form-group col-lg-6">
               <label>Excluded</label>
-              <textarea class="form-control" id="product_excluded" name="product_excluded" >{{ $productsDetail->product_excluded ?? '' }}</textarea>
+              <textarea class="form-control" id="product_excluded" name="product_excluded" >{{ old('product_excluded', $productsDetail->product_excluded ?? '') }}</textarea>
           </div>
         </div>
         <div class="form-group">
             <label>Aktivity</label>
             <div class="row">
-            @if(isset($productsDetail))
-              @php $fasi = explode(";",$productsDetail->parent_type); @endphp
-                @foreach($activities as $desti)
-                  <div class="col-md-6">
-                  <label class="checkbox-inline">
-                    @if(in_array($desti->code, $fasi))
-                      <input type="checkbox" name="parent_type[]" value="{{ $desti->code }}" checked />
-                    @else
-                      <input type="checkbox" name="parent_type[]" value="{{ $desti->code }}" />
-                    @endif
-                    {{$desti->name}} - {{$desti->lang}}
-                  </label>
-                  </div>
-                @endforeach
-            @else
-                @foreach($activities as $desti)
-                  <div class="col-md-6">
-              <label class="checkbox-inline">
-                <input type="checkbox" name="parent_type[]" value="{{ $desti->code }}" />{{$desti->name}} - {{$desti->lang}}
-              </label>
-                  </div>
-                @endforeach
-            @endif
+            @php $activitySelection = old('categories_present') ? old('parent_type', []) : explode(';', $productsDetail->parent_type ?? ''); @endphp
+            @foreach($activities as $activity)
+              <div class="col-md-6">
+                <label class="checkbox-inline">
+                  <input type="checkbox" name="parent_type[]" value="{{ $activity->code }}" @checked(in_array($activity->code, $activitySelection)) />
+                  {{ $activity->name }} - {{ $activity->lang }}
+                </label>
+              </div>
+            @endforeach
             </div>
         </div>
         <div class="form-group">
             <label>Destination  </label>
               <div class="row">
 
-                @if(isset($productsDetail))
-                  @php $fasi = explode(";",$productsDetail->dst_type) ; @endphp
-                    @foreach($destinasi as $desti)
-                    <div class="col-md-6">
-                      @if(in_array($desti->code, $fasi))
-                        <label class="checkbox-inline">
-                          <input type="checkbox" id="destination" name="destination[]" value="{{ $desti->code }}" checked />
-                        @else
-                          <input type="checkbox" id="destination" name="destination[]" value="{{ $desti->code }}" />
-                        </label>
-                      @endif
-                      {{$desti->name}} - {{$desti->lang}}
-                    </div>
-                    @endforeach
-                @else
-                    @foreach($destinasi as $desti)
-                    <div class="col-md-6">
-                      <label class="checkbox-inline">
-                        <input type="checkbox" id="destination" name="destination[]" value="{{ $desti->code }}" />{{$desti->name}} - {{$desti->lang}}
-                      </label>
-                    </div>
-                    @endforeach
-                @endif
-               
-                </label>
+                @php $destinationSelection = old('categories_present') ? old('destination', []) : explode(';', $productsDetail->dst_type ?? ''); @endphp
+                @foreach($destinasi as $desti)
+                  <div class="col-md-6">
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="destination[]" value="{{ $desti->code }}" @checked(in_array($desti->code, $destinationSelection)) />
+                      {{ $desti->name }} - {{ $desti->lang }}
+                    </label>
+                  </div>
+                @endforeach
             </div>
         </div>
         <div class="form-group">
@@ -273,17 +272,8 @@
       init: function () {
         // console.log('onload dropzone');
 
-        @if(isset($productsDetail) && $productsDetail->product_foto)
-          var filess = {!! json_encode($productsDetail->product_foto) !!}
-          var filesa = filess.split(';');
-
-          const files = [];
-          for (let a = 0; a < filesa.length -1; a++) {
-              files.push ({
-                  'file_name': filesa[a],
-              });
-              // console.log(filesa[a])
-          }
+          var filesa = @json(old('documents_present') ? old('document', []) : array_values(array_filter(explode(';', $productsDetail->product_foto ?? ''))));
+          const files = filesa.map(function (name) { return { file_name: name }; });
 
           // console.log(files);
           for (var i in files) {
@@ -308,7 +298,6 @@
 
             $('form').append('<input type="hidden" name="document[]" value="' + file.file_name + '">')
           }
-        @endif
       }
     }
     

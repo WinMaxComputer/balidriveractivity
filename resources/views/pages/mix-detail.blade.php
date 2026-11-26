@@ -1,19 +1,3 @@
-<?php
-    $url = $_SERVER['REQUEST_URI'];
-    $ur = explode('/', $url);
-    $table = $ur[1];
-    if($table == 'mix-detail'){
-        $table = 'products';
-    }
-    $slug = $ur[2]; 
-?>
-@if(isset($mixDetail[0]))
-@php 
-    $mixDetail = DB::table('products')->where('slug', $slug)->get(); 
-    $lang = $mixDetail[0]->lang ;
-    App::setLocale($lang);
-@endphp
-@endif
 @extends('layouts.default')
 @section('meta')
     <title>Bali Best Activity - Bali Driver Activity</title>
@@ -24,12 +8,12 @@
 @section('content')
     
     <!-- Page Title -->
-    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/travel/showcase-8.webp);">
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url('{{ asset('assets/img/travel/showcase-8.webp') }}');">
       <div class="container position-relative">
         <h1>{{ $mixDetail[0]->product_name }}</h1>
         <nav class="breadcrumbs">
           <ol>
-            <li><a href="/">Home</a></li>
+            <li><a href="{{ route('home') }}">Home</a></li>
             <li class="current">Tour Details</li>
           </ol>
         </nav>
@@ -295,14 +279,7 @@
 
             <div class="col-lg-8">
               <h2>Tour Overview</h2>
-              <div class="tour-rating">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-half"></i>
-                <span>4.8 (95)</span>
-              </div>
+              @include('includes.rating-summary', ['rating' => $ratings->get($mixDetail[0]->code)])
               {!! $mixDetail[0]->product_des !!}
               <div class="tour-pricing" data-aos="fade-up" data-aos-delay="500">
                   <div class="available-dates">
@@ -349,7 +326,10 @@
                       <strong>{{ session('currency', 'USD') }} {{ number_format(convertPrice($mixDetail[0]->price, session('currency', 'USD')), 0) }}</strong>
                     </div>
 
-                    <form class="booking-form-compact" id="mixBookingForm">
+                    <form class="booking-form-compact" id="mixBookingForm" method="GET" action="{{ route('checkout.show', ['type' => 'product', 'id' => $mixDetail[0]->id]) }}">
+                      @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">{{ $errors->first() }}</div>
+                      @endif
                       <div class="form-group mb-3">
                         <label class="form-label small" for="mix-travel-date">Travel Date</label>
                         <div class="date-picker-field">
@@ -359,11 +339,7 @@
                       </div>
                       <div class="form-group mb-3">
                         <label class="form-label small" for="mix-travelers">Travelers</label>
-                        <select id="mix-travelers" name="travelers" class="form-select form-select-sm">
-                          <option value="1">1 Person</option>
-                          <option value="2">2 People</option>
-                          <option value="3">3+ People</option>
-                        </select>
+                        <input type="number" id="mix-travelers" name="travelers" class="form-control form-control-sm" min="1" max="99999" value="1" required>
                       </div>
                       <div class="price-display mb-3">
                         <span>Starting from</span>
@@ -406,26 +382,45 @@
             </div>
 
             
-            @if(!empty($mixDetail[0]->itinerary))
             <div class="col-lg-8">
+            @if(count($itineraryItems))
               <!-- Itinerary -->
               <div class="tour-itinerary itinerary-section" data-aos="fade-up" data-aos-delay="300">
                 <h2>Itinerary</h2>
                 <div class="itinerary-timeline">
 
-                @php $itineraries = explode(";",$mixDetail[0]->itinerary); @endphp
-                @foreach($itineraries as $key => $itinerary)
-                  @if(!empty(trim($itinerary)))
+                @foreach($itineraryItems as $key => $item)
                     <div class="itinerary-item">
                       <div class="day-number">{{ $key + 1 }}</div>
                       <div class="day-content">
-                        <p>{!! $itinerary !!}</p>
-                        <div class="day-details">
-                          
-                        </div>
+                        @if ($item['reference'] !== '')
+                          @if ($item['place'] && $item['place']->slug)
+                            <h4><a href="{{ route($item['type'] === 'activity' ? 'activities.detail' : 'destinations.detail', $item['place']->slug) }}">{{ $item['place']->name }}</a></h4>
+                          @elseif ($item['place'])
+                            <h4>{{ $item['place']->name }} (detail unavailable)</h4>
+                          @else
+                            <h4>{{ ucfirst($item['type']) }} unavailable</h4>
+                          @endif
+                          @if ($item['photos'])
+                            <div class="itinerary-gallery">
+                              @foreach ($item['photos'] as $photo)
+                                @php $photoUrl = asset('assets/img/'.($item['type'] === 'activity' ? 'activity' : 'destinasi').'/'.$photo); @endphp
+                                <a href="{{ $photoUrl }}" class="glightbox" data-gallery="itinerary-{{ $key }}" aria-label="View photo {{ $loop->iteration }} of {{ $item['place']->name }}">
+                                  <img src="{{ $photoUrl }}" alt="{{ $item['place']->name }}" loading="lazy">
+                                </a>
+                              @endforeach
+                            </div>
+                          @endif
+                        @endif
+                        @if ($item['note'] !== '')
+                          @if ($item['legacy_html'])
+                            <div>{!! $item['note'] !!}</div>
+                          @else
+                            <p>{!! nl2br(e($item['note'])) !!}</p>
+                          @endif
+                        @endif
                       </div>
                     </div>
-                  @endif
                 @endforeach
                   
                 </div>
@@ -549,7 +544,7 @@
 
     </section><!-- /Travel Tour Details Section --><!-- Page Title -->
 
-    
+    @include('includes.service-reviews')
 
     
 

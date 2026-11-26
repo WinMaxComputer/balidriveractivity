@@ -35,5 +35,7 @@
 
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  {!! RecaptchaV3::initJs() !!}
+  @unless (Route::is('tour_reviews.form') || Route::is('product_reviews.form') || Route::is('customer.*') || Route::is('tracking.*') || Route::is('transfer.confirmation'))
+    {!! RecaptchaV3::initJs() !!}
+  @endunless
   

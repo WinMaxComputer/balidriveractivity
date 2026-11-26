@@ -19,9 +19,12 @@
         <!-- CSS -->
         <link href="{{ asset('black') }}/css/black-dashboard.css?v=1.0.0" rel="stylesheet" />
         <link href="{{ asset('black') }}/css/theme.css" rel="stylesheet" />
+        @stack('styles')
         
         <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+        @unless (Route::is('tour_reviews.link', 'tour_reviews.link.create', 'pages.orders', 'pages.orders.detail', 'pages.orders.review-link'))
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+        @endunless
     </head>
     <body class="{{ $class ?? '' }}">
         @auth()

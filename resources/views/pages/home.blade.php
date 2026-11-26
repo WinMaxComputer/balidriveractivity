@@ -38,7 +38,7 @@
           </div>
           <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
             <div class="about-image">
-              <img src="assets/img/travel/showcase-8.webp" alt="Travel Experience" class="img-fluid rounded-4">
+              <img src="/assets/img/travel/showcase-8.webp" alt="Travel Experience" class="img-fluid rounded-4">
               <div class="experience-badge">
                 <div class="experience-number">15+</div>
                 <div class="experience-text">Years of Excellence</div>
@@ -66,7 +66,6 @@
                   <div class="tour-image">
                     @php $gmbr = explode(";",$prd->product_foto) ; @endphp
                     <img src="{{asset('assets/img/products/'.$gmbr[0] ) }}" alt="Serene Beach Retreat" class="img-fluid" loading="lazy">
-                    <div class="tour-badge">Top Rated</div>
                     <div class="tour-price">{{ session('currency', 'USD') }} {{ number_format(convertPrice($prd->price, session('currency', 'USD')), 0) }} / Pax</div>
                     
                   </div>
@@ -92,15 +91,8 @@
                     </div>
                     <div class="tour-action">
                       <!-- <a href="booking.html" class="btn-book">Book Now</a> -->
-                      <a href="/mix-detail/{{ $prd->slug }}" class="btn-book">View Tour</a>
-                      <div class="tour-rating">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
-                        <span>4.8 (95)</span>
-                      </div>
+                      <a href="{{ route('mix_packages.detail', $prd->slug) }}" class="btn-book">View Tour</a>
+                      @include('includes.rating-summary', ['rating' => $ratings->get($prd->code)])
                     </div>
                   </div>
                 </div>
@@ -112,7 +104,7 @@
             </div>
 
             <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="500">
-              <a href="tours.html" class="btn-view-all">View All Tours</a>
+              <a href="{{ route('tour_packages') }}" class="btn-view-all">View All Tours</a>
             </div>
 
           </div>
@@ -212,7 +204,7 @@
           <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
             <div class="featured-destination">
               <div class="destination-overlay">
-                <img src="assets/img/travel/destination-3.webp" alt="Tropical Paradise" class="img-fluid">
+                <img src="/assets/img/travel/destination-3.webp" alt="Tropical Paradise" class="img-fluid">
                 <div class="destination-info">
                   <span class="destination-tag">Popular Choice</span>
                   <h3>Tropical Paradise</h3>
@@ -222,10 +214,6 @@
                     <div class="tours-count">
                       <i class="bi bi-collection"></i>
                       <span>22 Packages</span>
-                    </div>
-                    <div class="rating">
-                      <i class="bi bi-star-fill"></i>
-                      <span>4.9 (412)</span>
                     </div>
                   </div>
                   <div class="price-info">
@@ -249,7 +237,7 @@
                 <div class="compact-destination">
                   <div class="destination-image">
                     @php $gmbr = explode(";",$dst->foto) ; @endphp
-                    <img src="assets/img/destinasi/{{ $gmbr[0] }}" alt="Mountain Adventure" class="img-fluid">
+                    <img src="/assets/img/destinasi/{{ $gmbr[0] }}" alt="Mountain Adventure" class="img-fluid">
                     <div class="badge-offer">Best Value</div>
                   </div>
                   <div class="destination-details">
@@ -258,7 +246,6 @@
                     <p class="brief">{!! cutText($dst->deskripsi, 50, 3) !!}</p>
                     <div class="stats-row">
                       <span class="tour-count"><i class="bi bi-calendar-check"></i> 16 Tours</span>
-                      <span class="rating"><i class="bi bi-star-fill"></i> 4.8</span>
                       <span class="price">from $1,420</span>
                     </div>
                     <a href="destination-details.html" class="quick-link">View Details <i class="bi bi-chevron-right"></i></a>
@@ -295,7 +282,6 @@
               <div class="tour-image">
                 @php $gmbr = explode(";",$tur->foto) ; @endphp
                 <img src="{{asset('assets/img/tour/'.$gmbr[0] ) }}" alt="Serene Beach Retreat" class="img-fluid" loading="lazy">
-                <div class="tour-badge">Top Rated</div>
                 <div class="tour-price">$2,150</div>
               </div>
               <div class="tour-content">
@@ -312,14 +298,7 @@
                 </div>
                 <div class="tour-action">
                   <a href="booking.html" class="btn-book">Book Now</a>
-                  <div class="tour-rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i>
-                    <span>4.8 (95)</span>
-                  </div>
+                  @include('includes.rating-summary', ['rating' => $ratings->get($tur->code)])
                 </div>
               </div>
             </div>
@@ -384,7 +363,7 @@
                   <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
                   <i class="bi bi-quote quote-icon-right"></i>
                 </p>
-                <img src="assets/img/person/person-m-9.webp" class="testimonial-img" alt="">
+                <img src="/assets/img/person/person-m-9.webp" class="testimonial-img" alt="">
                 <h3>Saul Goodman</h3>
                 <h4>Ceo &amp; Founder</h4>
               </div>
@@ -397,7 +376,7 @@
                   <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
                   <i class="bi bi-quote quote-icon-right"></i>
                 </p>
-                <img src="assets/img/person/person-f-5.webp" class="testimonial-img" alt="">
+                <img src="/assets/img/person/person-f-5.webp" class="testimonial-img" alt="">
                 <h3>Sara Wilsson</h3>
                 <h4>Designer</h4>
               </div>
@@ -410,7 +389,7 @@
                   <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
                   <i class="bi bi-quote quote-icon-right"></i>
                 </p>
-                <img src="assets/img/person/person-f-12.webp" class="testimonial-img" alt="">
+                <img src="/assets/img/person/person-f-12.webp" class="testimonial-img" alt="">
                 <h3>Jena Karlis</h3>
                 <h4>Store Owner</h4>
               </div>
@@ -423,7 +402,7 @@
                   <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
                   <i class="bi bi-quote quote-icon-right"></i>
                 </p>
-                <img src="assets/img/person/person-m-12.webp" class="testimonial-img" alt="">
+                <img src="/assets/img/person/person-m-12.webp" class="testimonial-img" alt="">
                 <h3>Matt Brandon</h3>
                 <h4>Freelancer</h4>
               </div>
@@ -436,7 +415,7 @@
                   <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.</span>
                   <i class="bi bi-quote quote-icon-right"></i>
                 </p>
-                <img src="assets/img/person/person-m-13.webp" class="testimonial-img" alt="">
+                <img src="/assets/img/person/person-m-13.webp" class="testimonial-img" alt="">
                 <h3>John Larson</h3>
                 <h4>Entrepreneur</h4>
               </div>

@@ -12,6 +12,9 @@
 
       <form action="{{ route('tour.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
+        @if ($errors->any())
+          <div class="alert alert-danger" role="alert">{{ $errors->first() }}</div>
+        @endif
         <div class="row">
           <div class="form-group col-lg-6">
             <label>Code</label>
@@ -27,8 +30,8 @@
           <div class="form-group col-lg-6">
             <label>Lang</label>
             <select name="lang" class="form-control" style="background-color: #000; color: #fff;" required>
-              <option value="en" {{ $tourDetail->lang === 'en' ? 'selected' : '' }}>English</option>
-              <option value="id" {{ $tourDetail->lang === 'id' ? 'selected' : '' }}>Indonesia</option>
+              <option value="en" {{ ($tourDetail->lang ?? '') === 'en' ? 'selected' : '' }}>English</option>
+              <option value="id" {{ ($tourDetail->lang ?? '') === 'id' ? 'selected' : '' }}>Indonesia</option>
             </select>
           </div>
           <div class="form-group col-lg-6">
@@ -44,12 +47,12 @@
           <div class="form-group col-lg-6">
             <label>area</label>
             <select name="area_tour" class="form-control" style="background-color: #000; color: #fff;" required>
-              <option value="1" {{ $tourDetail->area_tour === '1' ? 'selected' : '' }}>Ubud</option>
-              <option value="2" {{ $tourDetail->area_tour === '2' ? 'selected' : '' }}>South</option>
-              <option value="3" {{ $tourDetail->area_tour === '3' ? 'selected' : '' }}>North</option>
-              <option value="4" {{ $tourDetail->area_tour === '4' ? 'selected' : '' }}>East</option>
-              <option value="5" {{ $tourDetail->area_tour === '5' ? 'selected' : '' }}>Kintamani</option>
-              <option value="6" {{ $tourDetail->area_tour === '6' ? 'selected' : '' }}>West</option>
+              <option value="1" {{ ($tourDetail->area_tour ?? '') === '1' ? 'selected' : '' }}>Ubud</option>
+              <option value="2" {{ ($tourDetail->area_tour ?? '') === '2' ? 'selected' : '' }}>South</option>
+              <option value="3" {{ ($tourDetail->area_tour ?? '') === '3' ? 'selected' : '' }}>North</option>
+              <option value="4" {{ ($tourDetail->area_tour ?? '') === '4' ? 'selected' : '' }}>East</option>
+              <option value="5" {{ ($tourDetail->area_tour ?? '') === '5' ? 'selected' : '' }}>Kintamani</option>
+              <option value="6" {{ ($tourDetail->area_tour ?? '') === '6' ? 'selected' : '' }}>West</option>
             </select>
           </div>
         </div>
@@ -60,6 +63,11 @@
         <div class="form-group">
             <label>Price</label>
             <textarea class="form-control" id="price" name="price" >{{ $tourDetail->price ?? '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="price_usd">Online booking price per person (USD)</label>
+            <input type="number" id="price_usd" name="price_usd" class="form-control" min="0.01" max="99999999.99" step="0.01" value="{{ old('price_usd', $tourDetail->price_usd ?? '') }}">
+            <small>Leave empty to disable online booking for this tour.</small>
         </div>
         <div class="form-group">
             <label>Pickup</label>
@@ -108,7 +116,7 @@
             <label>Aktivity</label>
             <div class="row">
             @if(isset($activities))
-              @php $fasi = explode(";",$tourDetail->activity); @endphp
+              @php $fasi = explode(";", $tourDetail->activity ?? ''); @endphp
                 @foreach($activities as $act)
                   <div class="col-md-6">
                     <label class="checkbox-inline">

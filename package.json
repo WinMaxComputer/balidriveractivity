@@ -15,6 +15,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "datatables.net-bs4": "^2.3.0",
         "flatpickr": "^4.6.13"
     }
 }

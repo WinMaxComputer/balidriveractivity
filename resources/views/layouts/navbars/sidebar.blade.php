@@ -6,7 +6,7 @@
         </div>
         <ul class="nav">
             <li @if ($pageSlug == 'dashboard') class="active " @endif>
-                <a href="{{ route('home') }}">
+                <a href="{{ route('dashboard') }}">
                     <i class="tim-icons icon-chart-pie-36"></i>
                     <p>{{ __('Dashboard') }}</p>
                 </a>
@@ -37,6 +37,20 @@
                     <p>{{ __('Mix Tours') }}</p>
                 </a>
             </li>
+            @if (auth()->user()->role === 'admin')
+                <li @if ($pageSlug == 'booking') class="active " @endif>
+                    <a href="{{ route('pages.orders') }}">
+                        <i class="tim-icons icon-chart-pie-36"></i>
+                        <p>Booking</p>
+                    </a>
+                </li>
+                <li @if ($pageSlug == 'transfer-order') class="active " @endif>
+                    <a href="{{ route('pages.transfer-order') }}">
+                        <i class="tim-icons icon-chart-pie-36"></i>
+                        <p>Transfer Order</p>
+                    </a>
+                </li>
+            @endif
             <!-- <li>
                 <a data-toggle="collapse" href="#laravel-examples" aria-expanded="true">
                     <i class="fab fa-laravel" ></i>

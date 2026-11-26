@@ -1,288 +1,510 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <url>
-        <loc>http://localhost:8000/about-us</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/contact_us</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/about-us</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/gallery</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/transfer</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/private-room-in-guesthouse-in-kecamatan-kuta-utara</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/events</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/kamar-deluxe-di-batu-bolong</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/transport</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/Bangunan-lumbung-yang-cantik</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/beautiful-lumbung-near-batu-bolong</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/service</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/lumbung-house-in-canggu</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-packages</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/jening-bangunan-split-dicanggu</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/destinations</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/guest-house-in-canggu-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/activities</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/kamar-dekat-pantai-yang-nyaman</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/double-room-in-canggu-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/about-us</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/guest-house-comfortable-in-canggu-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/transfer</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/double-a-guest-house-bytheswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/events</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/bookings/double-a-guest-house-yang-nyaman-bytheswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/transport</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/mount-batur-trekking-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/treking-ke-gunung-batur</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/service</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/jeep-batur-sunrise-activiti-with-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/mix-packages</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/aktivitas-menaiki-mobil-jeep</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/destinations</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/atv-ride-activity-from-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/activities</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/aktivitas-menaiki-kendaraan-segala-medan-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages/Ubud-Bali-Tour</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/riding-horse-in-bali-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages/Ubud-Bali-Tur</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/menunggangi-kuda-dibali-bersama-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages/South-Bali-Tour</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/bali-safari-marine-park</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages/Tour-Bali-Selatan-by-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/bali-safari-marine-park-bersama-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages/full-day-tour-north-of-bali-by-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/bali-cycling-tour</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages/tur-sehari-ke-bali-utara-by-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/tur-bersepda-di-bali-bersama-kami</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages/east-of-bali-tour-with-us-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/riding-camel-in-bali</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages/tur-bali-timur-bersama-kami-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/aktivitas-menunggangi-unta-di-bali</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages/west-of-bali-tour-by-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/play-water-sport-in-bali</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages/tur-menyenangkan-ke-daerah-bali-barat-heswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/activities/bermain-olah-raga-air-di-bali</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/tour_packages/kintamani-tour-with-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/barong-dance-on-bali</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/tour_packages/tur-ke-kawasan-kintamani-bali-bersama-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/tari-barong-di-bali</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/batur-trekking-from-ubud-area</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/mongkey-forest-ubud-bali-tour</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/batur-trekking-from-outside-ubud-area</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/mongkey-forest-ubud-bali-tur-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/sunrise-jeep-tour</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/tegenungan-waterfall-gianyar-the-swand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/sunrise-black-lava-black-sands</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/tegenungan-waterfall-berlokasi-di-gianyar-the-swand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/single-atv</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/visit-celuk-art-village-at-gianyar</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/most-popular-ubud-tour-mongkey-forest-kanto-lampo-waterfall</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/destinations/kunjungi-desa-seni-celuk-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/mix-detail/lagi-trend-ubud-tour-mongkey-forest-kanto-lampo-waterfall</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/transports/mobil dengan nyaman</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/best-of-activity-bali-atv-with-water-rafting</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/transports/Confort car </loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/mix-detail/best-of-activity-bali-atv-with-water-rafting</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/transports/very confort car</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/spectacular-combination-tour-activity-bali-atv-with-swing</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/transports/very-confort-car</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/mix-detail/spectacular-combination-tour-activity-bali-atv-with-swing</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/transports/mobil-nyaman-dan-luas</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/best-atv-bali-combination-waterfall-and-tegalalang-rice-terrace</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/transports/car-for-family</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/mix-detail/atv-terbaik</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/Ubud-Bali-Tour</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/ubud-atv-adventure-temple-waterfall-tour-bali</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/Ubud-Bali-Tur</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/mix-detail/new-experience</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/South-Bali-Tour</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/destinations/barong-dance-on-bali</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/Tour-Bali-Selatan-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/destinations/tari-barong-di-bali</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/full-day-tour-north-of-bali-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/destinations/mongkey-forest-ubud-bali-tour</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/tur-sehari-ke-bali-utara-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/destinations/mongkey-forest-ubud-bali-tur-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/east-of-bali-tour-with-us-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/destinations/tegenungan-waterfall-gianyar-the-swand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/tur-bali-timur-bersama-kami-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/destinations/tegenungan-waterfall-berlokasi-di-gianyar-the-swand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/west-of-bali-tour-by-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/destinations/visit-celuk-art-village-at-gianyar</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/tur-menyenangkan-ke-daerah-bali-barat-heswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/destinations/kunjungi-desa-seni-celuk-theswand</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/kintamani-tour-with-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/en/destinations/bali-bird-park</loc>
             </url>
     <url>
-        <loc>http://localhost:8000/tour_packages/tur-ke-kawasan-kintamani-bali-bersama-theswand</loc>
-            <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+    <loc>https://baliscenic.com/id/destinations/bali-bird-park-bersa,a-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/bali-zoo-park</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/kebun-binatang-bali-zoo</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/ubud-palace</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/ubud-palace-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/umah-bali-kuno-tapak-siring</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/umah-bali-kuno-tapak-siring-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/batuan-temple-ubud</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/batuan-temple-ubud-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/campuhan-ridge-walk</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/campuhan-ridge-walk-ubud-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/tegalalang-rice-field</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/terasering-sawah-di-tegalalang</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/tirta-empul-temple-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pura-tirta-empul-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/gunung-kawi-temple</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pura-gunung-kawi-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/goa-gajah-tremple</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pura-goa-gajah-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/hidden-canyon-guwang</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/hidden-canyon-guwang-gianyar-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/tibumana-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-tibumana-gianyar-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/tlaga-singha-ubud</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/tlaga-singha-ubud-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/luwak-coffee-plantation</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/kopi-luwak-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/Uluwatu-temple</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pura-uluwatu-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/water-blow-nusa-dua</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/water-blow-nusa-dua-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/geger-beach-nusa-dua</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/geger-beach-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/pandawa-beach-nusa-dua</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-pandawa-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/melasti-beach-nusa-dua</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-melasti-di-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/suluban-beach-nusa-dua</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-suluban-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/karma-beach-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-karma-nusa-dua-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/padang-padang-beach-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-padang-padang-bali-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/bingin-beach-south-bali-tour</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-bingin-di-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/impossible-beach-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/impossible-beach-bali-nusa-dua</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/dream-land-beach-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-dream-land-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/balangan-beach-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-balangan-nusa-dua-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/garuda-wisnu-kencana-gwk-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/garuda-wisnu-kencana-gwk-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/taman-ayun-temple</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pura-taman-ayun-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/leke-leke-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-leke-leke-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/tukad-bangkung-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/sungai-bangkung-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/nung-nung-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-nungnung-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/jatiluwih-rice-terrace-bali-by-the-swand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/sawah-terasering-jatiluwih-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/munduk-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-munduk-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/Bedugul-botanical-garden</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/kebun-raya-bedugl-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/ulun-danu-beratan-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/ulun-danu-beratan-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/handara-gate-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/handara-gate-bali-utara</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/wanagiri-hidden-hills-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/bukit-tersembunyi-wanagiri-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/banyumala-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-bnyumala-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/aling-aling-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-aling-aling-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/git-git-waterfal-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-git-git-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/sekumpul-waterfall-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/air-terjun-sekumpul-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/the-blooms-garden-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/the-blooms-garden-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/lovina-beach-north-of-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pantai-lovina-bali-utara</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/kerta-gosa-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/kerta-gosa-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/destinations/goa-lawah-temple</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/destinations/pura-goa-lawah-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/mount-batur-trekking-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/treking-ke-gunung-batur</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/jeep-batur-sunrise-activiti-with-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/aktivitas-menaiki-mobil-jeep</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/atv-ride-activity-from-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/aktivitas-menaiki-kendaraan-segala-medan-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/riding-horse-in-bali-by-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/menunggangi-kuda-dibali-bersama-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/bali-safari-marine-park</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/bali-safari-marine-park-bersama-theswand</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/bali-cycling-tour</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/tur-bersepda-di-bali-bersama-kami</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/riding-camel-in-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/aktivitas-menunggangi-unta-di-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/play-water-sport-in-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/bermain-olah-raga-air-di-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/visit-bali-rafting</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/kunjungi-aktifitas-rafting-dibali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/bali-swim-with-dolphin</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/berenang-bersama-lumba-lumba</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/paragliding-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/permainan-paragliding-di-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/en/activities/bali-jungle-swing-bali</loc>
+            </url>
+    <url>
+    <loc>https://baliscenic.com/id/activities/permainan-ayunan-di-bali</loc>
             </url>
 </urlset>

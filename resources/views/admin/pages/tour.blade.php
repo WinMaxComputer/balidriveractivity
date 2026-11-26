@@ -31,6 +31,9 @@
                 <td>{{$tur->lang}}</td>
                 <td>
                   <a href="{{ route('tour.edit',['tour_code' => $tur->id]) }}"><i class="tim-icons icon-pencil"></i></a>
+                  @if (auth()->user()->role === 'admin')
+                    <a href="{{ route('tour_reviews.link', $tur->slug) }}">Review link</a>
+                  @endif
                   <i class="tim-icons icon-trash-simple"></i>
                 </td>
               </tr>

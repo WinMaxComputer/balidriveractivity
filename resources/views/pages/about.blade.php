@@ -31,12 +31,12 @@
           </div>
 
           <div class="row gy-4">
-            <div class="col-lg-7 position-relative about-img" style="background-image: url(assets/img/about.jpg) ;" data-aos="fade-up" data-aos-delay="150">
+            <div class="col-lg-7 position-relative about-img" style="background-image: url(/assets/img/about.jpg) ;" data-aos="fade-up" data-aos-delay="150">
               <div class="call-us position-absolute">
                 <h4>{{ __('headmenu.about_book') }}</h4>
                 
                 <a href="https://api.whatsapp.com/send?phone=+6282340064488&text=Halo" target="_blank" class="btn-book-a-table">
-                    <img src="assets/img/wa.png" class="img-fluid">+62 8234 006 4488
+                    <img src="/assets/img/wa.png" class="img-fluid">+62 8234 006 4488
                   </a>
                 
               </div>
@@ -59,7 +59,7 @@
                   <li><i class="bi bi-check2-all"></i> As Property Owner : and also taking care all about the property.</li>
                 </ul>
                 <!-- <div class="position-relative mt-4">
-                  <img src="assets/img/about-2.jpg" class="img-fluid" alt="">
+                  <img src="/assets/img/about-2.jpg" class="img-fluid" alt="">
                   <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox play-btn"></a>
                 </div> -->
               </div>

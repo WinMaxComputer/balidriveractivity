@@ -1,30 +1,4 @@
 @extends('layouts.default')
-<?php
-    $url = $_SERVER['REQUEST_URI'];
-    $ur = explode('/', $url);
-    $table = $ur[1];
-    $slug = $ur[2]; 
-?>
-@if(isset($tourDetail))
-@php 
-    $tourDetail = DB::table($table)->where('slug', $slug)
-            ->join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
-            ->select('tour_packages.*', 'tour_fotos.foto')
-            ->get(); 
-    $lang = $tourDetail[0]->lang ;
-    App::setLocale($lang);
-@endphp
-@php 
-    $destinasi = DB::table('destinations')->where('lang', $lang)
-                ->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
-                ->select('destinations.*', 'destination_fotos.foto')
-                ->get(); 
-    $activities = DB::table('activities')->where('lang', $lang)
-                ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
-                ->select('activities.*', 'activity_fotos.foto')
-                ->get(); 
-@endphp
-@endif
 
 @section('meta')
     <title>The Swand - {{ $tourDetail[0]->tour_name }}</title>
@@ -40,7 +14,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <h2>Tour Detail</h2>
           <ol>
-            <li><a href="/">Home</a></li>
+            <li><a href="{{ route('home') }}">Home</a></li>
             <li>{{ $tourDetail[0]->tour_name }}</li>
           </ol>
         </div>
@@ -62,6 +36,7 @@
                     
                     <div class="position-relative mt-4">
                         <h4>{{ $tourDetail[0]->tour_name }}</h4>
+                        @include('includes.rating-summary', ['rating' => $ratings->get($tourDetail[0]->code)])
                         <p>{!! $tourDetail[0]->itinerary !!}</p>
                         <p>{!! $tourDetail[0]->price !!}</p>
                         <p>{!! $tourDetail[0]->pickup !!}</p>
@@ -69,13 +44,19 @@
                     </div>
                 </div>
                 <div class="col-lg-6 position-relative about-img" data-aos="fade-up" data-aos-delay="150">
-                    <p>
+                    <div class="mb-3">
                         <h4>Make Booking</h4>
+                        @if (($tourDetail[0]->price_usd ?? null) > 0)
+                            <p>USD {{ number_format($tourDetail[0]->price_usd, 2) }} per person</p>
+                            <a href="{{ route('checkout.show', ['type' => 'tour', 'id' => $tourDetail[0]->id]) }}" class="btn-book-a-table">Book Now</a>
+                        @else
+                            <p>Contact us for booking and pricing.</p>
+                        @endif
                         <!-- <img src="/assets/img/about.jpg" class="img-fluid" alt=""> -->
                         <a href="https://api.whatsapp.com/send?phone=+6282340064488&text=Halo" target="_blank" class="btn-book-a-table">
                             <img src="{{ asset('assets/img/wa.png')}}" class="img-fluid">+62 8234 006 4488
                         </a>
-                    </p>
+                    </div>
                     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                         <ol class="carousel-indicators">
 
@@ -122,7 +103,7 @@
                             @php $gmbr = explode(";",$desti->foto) ; @endphp
                             <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
                                 <div class="chef-member">
-                                    <a href="/destinations/{{$desti->slug}}">
+                                    <a href="{{ route('destinations.detail', $desti->slug) }}">
                                         <div class="member-img">
                                             <img src="{{ asset('assets/img/destinasi/'.$gmbr[0] )}}" class="img-fluid" alt="{{ $desti->name }}">
                                         </div>
@@ -150,7 +131,7 @@
                             @php $gmbr = explode(";",$actv->foto) ; @endphp
                             <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
                                 <div class="chef-member">
-                                    <a href="/activities/{{$actv->slug}}">
+                                    <a href="{{ route('activities.detail', $actv->slug) }}">
                                         <div class="member-img">
                                             <img src="{{ asset('assets/img/activity/'.$gmbr[0] )}}" class="img-fluid" alt="{{ $actv->name }}">
                                         </div>
@@ -171,7 +152,7 @@
                 <div class="content ps-0 ps-lg-5">
 
                 <div class="position-relative mt-4">
-                    <img src="assets/img/about-2.jpg" class="img-fluid" alt="">
+                    <img src="/assets/img/about-2.jpg" class="img-fluid" alt="">
                     <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox play-btn"></a>
                 </div>
 
@@ -201,6 +182,6 @@
         </div>
     </section><!-- End About Section -->
 
-    
+    @include('includes.service-reviews')
 
 @stop

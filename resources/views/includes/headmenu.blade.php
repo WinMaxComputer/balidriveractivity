@@ -1,7 +1,7 @@
 <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-      <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
+      <a href="{{ route('home') }}" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <img src="{{ asset('assets/img/logo.webp') }}" alt="">
         <h1 class="sitename">BALI SCENIC</h1>
@@ -9,11 +9,11 @@
       
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="/" class="active">Home</a></li>
+          <li><a href="{{ route('home') }}" class="active">Home</a></li>
           <!-- <li><a href="/activities">{{ __('headmenu.tour_activity') }}</a></li>
           <li><a href="/destinations">{{ __('headmenu.destinations') }}</a></li> -->
-          <li><a href="/tour_packages">{{ __('headmenu.tour_package') }}</a></li>
-          <li><a href="/transfer">BOOK AIRPORT TRANSFER</a></li>
+          <li><a href="{{ route('transfer') }}">BOOK AIRPORT TRANSFER</a></li>
+          <li><a href="{{ route('tracking.form') }}">Track Booking</a></li>
           <li class="dropdown">
             <a href="#"><span>{{ session('currency', 'USD') }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
@@ -24,8 +24,8 @@
           <li class="dropdown">
             <a href="#"><span>{{ strtoupper(Lang::locale()) }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
-              <li><a href="{!! route('lang', ['lang'=>'en', 'tabel'=>$tabel, 'slug' => $slug]) !!}">English</a></li>
-              <li><a href="{!! route('lang', ['lang'=>'id', 'tabel'=>$tabel, 'slug' => $slug]) !!}">Indonesian</a></li>
+              <li><a href="{{ \App\Support\LocalizedRoutes::languageUrl(request(), 'en') }}">English</a></li>
+              <li><a href="{{ \App\Support\LocalizedRoutes::languageUrl(request(), 'id') }}">Indonesian</a></li>
             </ul>
           </li>
         </ul>
@@ -40,7 +40,7 @@
 
     <div class="hero-background">
       <video autoplay="" muted="" loop="">
-        <source src="assets/img/travel/video-2.mp4" type="video/mp4">
+        <source src="/assets/img/travel/video-2.mp4" type="video/mp4">
       </video>
       <div class="hero-overlay"></div>
     </div>
@@ -52,8 +52,7 @@
             <h1 class="hero-title">{{ __('headmenu.welcome_title') }}</h1>
             <p class="hero-subtitle">{{ __('headmenu.welcome_desc') }}</p>
             <div class="hero-buttons">
-              <a href="#" class="btn btn-primary me-3">Start Exploring</a>
-              <a href="#" class="btn btn-outline">Browse Tours</a>
+              <a href="{{ route('tour_packages') }}" class="btn btn-outline">Browse Tours</a>
             </div>
           </div>
         </div>
@@ -62,18 +61,46 @@
           <div class="booking-form-wrapper" data-aos="fade-left" data-aos-delay="200">
             <div class="booking-form">
               <h3 class="form-title">{{ __('booking.title_planing') }}</h3>
-              <form action="" class="">
-                <div class="form-group mb-3">
-                  <label for="destination">{{ __('booking.destination') }}</label>
-                  <select name="destination" id="destination" class="form-select" required="">
-                    <option value="">Choose your destination</option>
-                    <option value="ubud">Ubud</option>
-                    <option value="south">South Bali</option>
-                    <option value="north">North Bali</option>
-                    <option value="east">East Bali</option>
-                    <option value="kintamani">Kintamani</option>
-                    <option value="west">West Bali</option>
-                  </select>
+              <form action="{{ route('tour_packages') }}" method="GET">
+                <div class="form-group mb-3 destination-search">
+                  <input type="text" name="destination" id="destination" class="form-control" placeholder="Search destinations, activities, mixes or products" autocomplete="off" aria-controls="popular-destinations" aria-expanded="false" required>
+                  <div class="destination-suggestions" id="popular-destinations" hidden>
+                    <p class="destination-suggestions-title">Popular searches</p>
+                    <div class="destination-suggestion-groups">
+                      <div class="destination-suggestion-group" data-suggestion-group>
+                        <p class="destination-suggestion-category">Destinations</p>
+                        <div class="destination-suggestions-list" role="listbox" aria-label="Popular destinations">
+                          @foreach (($destination ?? collect())->take(5) as $item)
+                            <button type="button" role="option">{{ $item->name }}</button>
+                          @endforeach
+                        </div>
+                      </div>
+                      <div class="destination-suggestion-group" data-suggestion-group>
+                        <p class="destination-suggestion-category">Activities</p>
+                        <div class="destination-suggestions-list" role="listbox" aria-label="Popular activities">
+                          @foreach (($activities ?? collect())->take(5) as $item)
+                            <button type="button" role="option">{{ $item->name }}</button>
+                          @endforeach
+                        </div>
+                      </div>
+                      <div class="destination-suggestion-group" data-suggestion-group>
+                        <p class="destination-suggestion-category">Mix</p>
+                        <div class="destination-suggestions-list" role="listbox" aria-label="Popular mix packages">
+                          @foreach (($product ?? collect())->take(5) as $item)
+                            <button type="button" role="option">{{ $item->product_name }}</button>
+                          @endforeach
+                        </div>
+                      </div>
+                      <div class="destination-suggestion-group" data-suggestion-group>
+                        <p class="destination-suggestion-category">Products</p>
+                        <div class="destination-suggestions-list" role="listbox" aria-label="Popular products">
+                          @foreach (($product ?? collect())->take(5) as $item)
+                            <button type="button" role="option">{{ $item->product_name }}</button>
+                          @endforeach
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="row">
@@ -104,17 +131,6 @@
                   
                 </div>
 
-                <div class="form-group mb-3">
-                  <label for="tour-type">{{ __('booking.type_of_tour') }}</label>
-                  <select name="tour_type" id="tour-type" class="form-select" required="">
-                    <option value="">Select tour type</option>
-                    <option value="adventure">Activity</option>
-                    <option value="cultural">Mix</option>
-                    <option value="relaxation">Land</option>
-                    <option value="family">Air</option>
-                    <option value="luxury">Water</option>
-                  </select>
-                </div>
 
                 <button type="submit" class="btn btn-primary w-100">{{ __('booking.submit') }}</button>
               </form>

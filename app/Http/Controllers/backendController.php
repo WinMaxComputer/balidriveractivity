@@ -7,7 +7,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Str;
+use Illuminate\Support\Str;
+use App\Support\ProductItinerary;
+use Illuminate\Validation\ValidationException;
 use Validator;
 
 class backendController extends Controller
@@ -146,6 +148,9 @@ class backendController extends Controller
 
     public function storeTour(Request $request)
     {
+        $request->validate([
+            'price_usd' => ['nullable', 'numeric', 'gt:0', 'max:99999999.99', 'regex:/^\d+(\.\d{1,2})?$/'],
+        ]);
         try{
             $exception = DB::transaction(function() use ($request){ 
             
@@ -153,6 +158,7 @@ class backendController extends Controller
                 $data['document'] = $data['document'] ?? [];
                 $data['parent_type'] = $data['parent_type'] ?? [];
                 $data['destination'] = $data['destination'] ?? [];
+                $data['activity'] = $data['activity'] ?? [];
 
                 $gmbr = "";
                 $foto = $data['document'];
@@ -170,6 +176,7 @@ class backendController extends Controller
                     'area_tour' => $data['area_tour'],
                     'itinerary' => $data['itinerary'],
                     'price' => $data['price'],
+                    'price_usd' => $data['price_usd'] ?? null,
                     'destination' => $desti.';',
                     'activity' => $acti.';',
                     'lang' => $data['lang'],
@@ -456,94 +463,125 @@ class backendController extends Controller
 
     public function storeProducts(Request $request)
     {
-        try{
-            $exception = DB::transaction(function() use ($request){ 
-                
-            
-                $data = $request->all();
-                $data['document'] = $data['document'] ?? [];
-                $data['parent_type'] = $data['parent_type'] ?? [];
-                $data['destination'] = $data['destination'] ?? [];
-                $data['product_included'] = $data['product_included'] ?? [];
-                $data['product_excluded'] = $data['product_excluded'] ?? [];
-                $data['itinerary'] = $data['itinerary'] ?? [];
+        $data = $request->validate([
+            'id' => ['nullable', 'integer', 'exists:products,id'],
+            'code' => ['required', 'string', 'max:100'],
+            'product_name' => ['required', 'string', 'max:255'],
+            'lang' => ['required', 'string', 'max:50'],
+            'price' => ['required', 'integer', 'min:0', 'max:2147483647'],
+            'product_des' => ['nullable', 'string'],
+            'product_included' => ['nullable', 'string'],
+            'product_excluded' => ['nullable', 'string'],
+            'meta_keyword' => ['nullable', 'string'],
+            'meta_description' => ['nullable', 'string'],
+            'document' => ['nullable', 'array'],
+            'document.*' => ['string'],
+            'parent_type' => ['nullable', 'array'],
+            'parent_type.*' => ['string'],
+            'destination' => ['nullable', 'array'],
+            'destination.*' => ['string'],
+            'itinerary' => ['nullable', 'array'],
+            'itinerary.*' => ['array'],
+            'itinerary.*.reference' => ['nullable', 'string', 'regex:/^(activity|destination):[1-9][0-9]*$/'],
+            'itinerary.*.note' => ['nullable', 'string'],
+        ]);
 
-                $gmbr = "";
-                $foto = $data['document'];
-                foreach($foto as $ft){
-                    $gmbr = $gmbr.$ft.";" ;
+        $items = $data['itinerary'] ?? [];
+        $ids = ['activity' => [], 'destination' => []];
+        foreach ($items as $index => $item) {
+            $reference = $item['reference'] ?? '';
+            if ($reference !== '') {
+                [$type, $id] = explode(':', $reference, 2);
+                if (filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+                    throw ValidationException::withMessages(["itinerary.$index.reference" => 'The selected itinerary item is invalid.']);
                 }
-                $parent = implode(';', $data['parent_type']);
-                $desti = implode(';', $data['destination']);
-                $project = DB::table('products')->upsert([
-                    'id' => $data['id'],
-                    'code' => $data['code'],
-                    'product_des' => $data['product_des'],
-                    'itinerary' => implode(';', $data['itinerary']),
-                    'product_included' => $data['product_included'],
-                    'product_excluded' => $data['product_excluded'],
-                    'product_name' => $data['product_name'],
-                    'slug' => \Illuminate\Support\Str::slug($data['product_name']),
-                    'parent_type' => $parent.';',
-                    'dst_type' => $desti.';',
-                    'lang' => $data['lang'],
-                    'meta_keyword' => $data['meta_keyword'],
-                    'meta_description' => $data['meta_description'],
-                    'product_foto' => $gmbr,
-                    'price' => $data['price'],
-                    'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
-                    'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
-                ], 'id');
-
-                DB::commit();
-            });
-            if(is_null($exception)) {
-                // return response()->json([
-                //     'success' => true,
-                //     'message' => 'Post Berhasil Diupdate!',
-                // ], 200);
-                return redirect()->route('pages.products', 'all');
-            } else {
-                DB::rollback();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Post Gagal Diupdate!',
-                ], 500);
-                // return redirect()->route('pages.room_add');
+                $ids[$type][] = (int) $id;
             }
-        } catch (\Exception $e) {
-            DB::rollback();
-            // something went wrong
-            // return response()->json([
-            //  'success' => false,
-            //  'message' => $e->getMessage(),
-            // ], 400);
-            // return redirect()->route('pages.room_add');
-            return redirect()->back()->with('success', $e->getMessage());   
+        }
+        $places = [
+            'activity' => DB::table('activities')->whereIn('id', $ids['activity'])->get()->keyBy('id'),
+            'destination' => DB::table('destinations')->whereIn('id', $ids['destination'])->get()->keyBy('id'),
+        ];
+        $activityCodes = $data['parent_type'] ?? [];
+        $destinationCodes = $data['destination'] ?? [];
+        $previous = isset($data['id']) ? DB::table('products')->where('id', $data['id'])->first() : null;
+        $legacyNotes = $previous
+            ? collect(ProductItinerary::parse($previous->itinerary))->where('legacy_html', true)->pluck('note')->all()
+            : [];
+        $savedItems = [];
+        foreach ($items as $index => $item) {
+            $reference = $item['reference'] ?? '';
+            $note = $item['note'] ?? '';
+            if ($reference === '' && trim($note) === '') {
+                continue;
+            }
+            if ($reference !== '') {
+                [$type, $id] = explode(':', $reference, 2);
+                $place = $places[$type]->get((int) $id);
+                if (!$place) {
+                    throw ValidationException::withMessages(["itinerary.$index.reference" => 'The selected activity or destination no longer exists.']);
+                }
+                if ($type === 'activity') {
+                    $activityCodes[] = $place->code;
+                } else {
+                    $destinationCodes[] = $place->code;
+                }
+            }
+            $savedItems[] = [
+                'reference' => $reference,
+                'note' => $note,
+                'legacy_html' => in_array($note, $legacyNotes, true),
+            ];
         }
 
-        // return redirect()->route('pages.rooms');
+        $attributes = [
+            'code' => $data['code'],
+            'product_des' => $data['product_des'] ?? '',
+            'itinerary' => json_encode(['format' => 'product_itinerary_v1', 'items' => $savedItems], JSON_THROW_ON_ERROR),
+            'product_included' => $data['product_included'] ?? '',
+            'product_excluded' => $data['product_excluded'] ?? '',
+            'product_name' => $data['product_name'],
+            'slug' => Str::slug($data['product_name']),
+            'parent_type' => implode(';', array_unique($activityCodes)).';',
+            'dst_type' => implode(';', array_unique($destinationCodes)).';',
+            'lang' => $data['lang'],
+            'meta_keyword' => $data['meta_keyword'] ?? '',
+            'meta_description' => $data['meta_description'] ?? '',
+            'product_foto' => implode('', array_map(fn ($file) => $file.';', $data['document'] ?? [])),
+            'price' => $data['price'],
+            'updated_at' => now(),
+        ];
+
+        if ($previous) {
+            DB::table('products')->where('id', $previous->id)->update($attributes);
+        } else {
+            $attributes['created_at'] = now();
+            DB::table('products')->insert($attributes);
+        }
+        return redirect()->route('pages.products', 'all');
     }
 
     public function editProducts($code){
         // $tourDetail = DB::table('tour_packages')->where('code', $room_code)->first();
         // return redirect()->route('pages.room_add');
         $productsDetail = DB::table('products')->where('id', $code)->first();
+        abort_unless($productsDetail, 404);
 
-        $activities = DB::table('activities')->where('lang', $productsDetail->lang)->get();
-        $destinasi = DB::table('destinations')->where('lang', $productsDetail->lang)->get();
-        return view('admin.pages.products_add', compact('productsDetail', 'activities', 'destinasi'));
+        $activities = DB::table('activities')->get();
+        $destinasi = DB::table('destinations')->get();
+        $itineraryItems = ProductItinerary::parse($productsDetail->itinerary);
+        return view('admin.pages.products_add', compact('productsDetail', 'activities', 'destinasi', 'itineraryItems'));
 
     }
 
     public function guestOrder(Request $request){
-        $email = $request->email ;
-        $data = DB::table('reservations')->where('guest_email', $email)->orderby('id', 'DESC')->get();
+        $email = $request->user()->email;
+        $data = DB::table('reservations')->whereRaw('LOWER(guest_email) = ?', [mb_strtolower($email)])->orderby('id', 'DESC')->get();
          return response()->json([
             'success' => true,
             'message' => 'your list reservasi!',
             'data' => $data
-        ], 200);
+        ], 200)->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');
 
     }
 

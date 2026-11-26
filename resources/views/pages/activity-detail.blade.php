@@ -1,24 +1,3 @@
-<?php
-    $url = $_SERVER['REQUEST_URI'];
-    $ur = explode('/', $url);
-    $table = $ur[1];
-    $slug = $ur[2]; 
-?>
-@if(isset($activityDetail))
-    @php 
-        $activityDetail = DB::table($table)->where('slug', $slug)
-                    ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
-                    ->select('activities.*', 'activity_fotos.foto')
-                    ->get(); 
-        $lang = $activityDetail[0]->lang ;
-        App::setLocale($lang);
-    @endphp
-    @php 
-        $product = DB::table('products')->get();
-        $country = DB::table('countries')->get(); 
-    @endphp
-@endif
-
 @extends('layouts.default')
 @section('meta')
     <title>{{ $activityDetail[0]->name }} - Bali Driver Activity</title>
@@ -33,7 +12,7 @@ $desk = explode("</p>", $des) ;
 @endphp
 @section('content')   
     <!-- Page Title -->
-    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/travel/showcase-8.webp);">
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(/assets/img/travel/showcase-8.webp);">
       <div class="container position-relative">
         <h1>Tour Details</h1>
         <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
@@ -373,9 +352,9 @@ $desk = explode("</p>", $des) ;
                             <!-- <span>Cook</span> -->
                             <p>{!! cutText($desa[0], 300, 1) !!}</p>
                         </div>
-                        <p class="price">{{ number_format($prod->price) ; }}</p>
+                        <p class="price">USD {{ number_format($prod->price, 2) }} / person</p>
                         <div class="form-group d-flex activity-booking">
-                            <a href="#" class="btn-book-a-table" id="{{ $prod->code }}" onclick="bookNow(this)">book Now</a>
+                            <a href="{{ route('checkout.show', ['type' => 'product', 'id' => $prod->id]) }}" class="btn-book-a-table">Book Now</a>
                         </div>
                         </div>
                         

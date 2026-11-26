@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Support\DeliverableMail;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\Request;
 
 class ForgotPasswordController extends Controller
 {
@@ -18,5 +20,16 @@ class ForgotPasswordController extends Controller
     |
     */
 
-    use SendsPasswordResetEmails;
+    use SendsPasswordResetEmails {
+        sendResetLinkEmail as private sendConfiguredResetLinkEmail;
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        if (!DeliverableMail::configured()) {
+            return back()->withErrors(['email' => 'Password reset is unavailable until email delivery is configured.']);
+        }
+
+        return $this->sendConfiguredResetLinkEmail($request);
+    }
 }

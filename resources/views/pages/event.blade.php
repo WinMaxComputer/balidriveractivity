@@ -21,7 +21,7 @@
 
           @foreach ($artikel as $art)
 
-            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(assets/img/artikel/{{$art->foto}})">
+            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(/assets/img/artikel/{{$art->foto}})">
               <h3>{{ $art->judul }}</h3>
               <!-- <div class="price align-self-start">$99</div> -->
               <div class="description">

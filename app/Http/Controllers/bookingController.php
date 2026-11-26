@@ -13,9 +13,13 @@ use App\Models\Artikel;
 use App\Models\Gallery;
 use App\Models\Rate;
 use App\Models\Review;
+use App\Support\ProductItinerary;
 use Stevebauman\Location\Facades\Location;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -25,7 +29,7 @@ class bookingController extends Controller
 {
     //
     public function transport(){
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $kamar = Booking::where('bookings.lang', $defaultLocale)->get();
         $transport = Transport::where('transports.lang', $defaultLocale)->get();
         return view('pages.transport',['transport' => $transport] );
@@ -33,24 +37,78 @@ class bookingController extends Controller
 
     public function tour(Request $request){
         $perPage = $request->query('per_page', 100);
-        $defaultLocale = config('app.locale');
-        $products = DB::table('products')->where('lang', $defaultLocale)->orderBy('id', 'desc')->paginate($perPage);
-        $defaultLocale = config('app.locale');
-        $tur = TourPackage::join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
-                    ->where('tour_packages.lang', $defaultLocale)
-                    ->select('tour_packages.*', 'tour_fotos.foto')
-                    ->get();
+        $defaultLocale = app()->getLocale();
+        $searchTerm = trim((string) $request->query('destination', ''));
+        $destinationCodes = collect();
+        $activityCodes = collect();
+
+        if ($searchTerm !== '') {
+            $destinationCodes = DB::table('destinations')
+                ->where('lang', $defaultLocale)
+                ->where('name', 'like', '%' . $searchTerm . '%')
+                ->pluck('code');
+            $activityCodes = DB::table('activities')
+                ->where('lang', $defaultLocale)
+                ->where('name', 'like', '%' . $searchTerm . '%')
+                ->pluck('code');
+        }
+
+        $matchesCodes = function ($query, $column, $codes) {
+            foreach ($codes as $code) {
+                $query->orWhere($column, 'like', $code . ';%')
+                    ->orWhere($column, 'like', '%;' . $code . ';%');
+            }
+        };
+
+        $productQuery = DB::table('products')->where('lang', $defaultLocale);
+        $tourQuery = TourPackage::join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
+            ->where('tour_packages.lang', $defaultLocale)
+            ->select('tour_packages.*', 'tour_fotos.foto');
+
+        if ($searchTerm !== '') {
+            $productQuery->where(function ($query) use ($searchTerm, $destinationCodes, $activityCodes, $matchesCodes) {
+                $query->where('product_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('product_des', 'like', '%' . $searchTerm . '%')
+                    ->orWhere(function ($codeQuery) use ($destinationCodes, $matchesCodes) {
+                        $matchesCodes($codeQuery, 'dst_type', $destinationCodes);
+                    })
+                    ->orWhere(function ($codeQuery) use ($activityCodes, $matchesCodes) {
+                        $matchesCodes($codeQuery, 'parent_type', $activityCodes);
+                    });
+            });
+
+            $tourQuery->where(function ($query) use ($searchTerm, $destinationCodes, $activityCodes, $matchesCodes) {
+                $query->where('tour_packages.tour_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('tour_packages.itinerary', 'like', '%' . $searchTerm . '%')
+                    ->orWhere(function ($codeQuery) use ($destinationCodes, $matchesCodes) {
+                        $matchesCodes($codeQuery, 'tour_packages.destination', $destinationCodes);
+                    })
+                    ->orWhere(function ($codeQuery) use ($activityCodes, $matchesCodes) {
+                        $matchesCodes($codeQuery, 'tour_packages.activity', $activityCodes);
+                    });
+            });
+        }
+
+        $products = $productQuery->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+        $tur = $tourQuery->get();
         $activities = DB::table('activities')->where('lang', $defaultLocale)
                     ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
                     ->select('activities.*', 'activity_fotos.foto')
                     ->get();
+        $ratings = Review::ratingSummaries($products->getCollection()->pluck('code')->merge($tur->pluck('code')));
         // $products = DB::table('products')->orderBy('id', 'desc')->get();
-        return view('pages.tour',['tour' => $tur, 'activities' => $activities, 'product' => $products] );
+        return view('pages.tour', [
+            'tour' => $tur,
+            'activities' => $activities,
+            'product' => $products,
+            'searchTerm' => $searchTerm,
+            'ratings' => $ratings,
+        ]);
     }
     public function mix(Request $request){
         $perPage = $request->query('per_page', 6);
-        $products = DB::table('products')->orderBy('id', 'desc')->paginate($perPage);
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
+        $products = DB::table('products')->where('lang', $defaultLocale)->orderBy('id', 'desc')->paginate($perPage);
         $tur = TourPackage::join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
                     ->where('tour_packages.lang', $defaultLocale)
                     ->select('tour_packages.*', 'tour_fotos.foto')
@@ -64,7 +122,7 @@ class bookingController extends Controller
     }
 
     public function hotel(){
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $hotel = Booking::join('room_fotos', 'room_fotos.code', 'bookings.code')
                         ->where('bookings.lang', $defaultLocale)
                         ->select('bookings.*', 'room_fotos.foto')
@@ -78,7 +136,7 @@ class bookingController extends Controller
     public function service(){
         
 
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $kamar = Booking::where('bookings.lang', $defaultLocale)->get();
         $transport = Transport::where('transports.lang', $defaultLocale)->get();
         $detinasi = Destination::where('destinations.lang', $defaultLocale)->get();
@@ -106,7 +164,7 @@ class bookingController extends Controller
 
     public function home(){
 
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $date = Carbon::now()->format('Y-m-d');
         $fasilitas = Facility::all();
         $transport = Transport::where('transports.lang', $defaultLocale)->get();
@@ -125,6 +183,7 @@ class bookingController extends Controller
         $galeri = Gallery::where('lang', $defaultLocale)->take(3)->get();
         $product = DB::table('products')->where('lang', $defaultLocale)->orderBy('id', 'desc')->take(4)->get();
         $activities = DB::table('activities')->where('lang', $defaultLocale)->get();
+        $ratings = Review::ratingSummaries($product->pluck('code')->merge($tur->pluck('code')));
         // var_dump($kamar[0]->foto);
 
         return view('pages.home',[
@@ -137,6 +196,7 @@ class bookingController extends Controller
             'fasilitas' => $fasilitas,
             'product' => $product,
             'activities' => $activities,
+            'ratings' => $ratings,
             ] );
     }
 
@@ -150,7 +210,7 @@ class bookingController extends Controller
 
     public function destination()
     {
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $destination = DB::table('destinations')->where('lang', $defaultLocale)
                         ->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
                         ->select('destinations.*', 'destination_fotos.foto')
@@ -160,16 +220,18 @@ class bookingController extends Controller
 
     public function destinationDetail($slug){
         $destinationDetail = DB::table('destinations')->where('destinations.slug', $slug)
+                        ->where('destinations.lang', app()->getLocale())
                         ->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
                         ->select('destinations.*', 'destination_fotos.foto')
                         ->get();
+        abort_if($destinationDetail->isEmpty(), 404);
                         // dd($destinationDetail);
         return view('pages.destination-detail', ['destinationDetail' => $destinationDetail]);
     }
 
     public function activity()
     {
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $activity = DB::table('activities')->where('lang', $defaultLocale)
                     ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
                     ->select('activities.*', 'activity_fotos.foto')
@@ -179,21 +241,31 @@ class bookingController extends Controller
 
     public function activityDetail($slug){
         $activityDetail = DB::table('activities')->where('slug', $slug)
+                    ->where('activities.lang', app()->getLocale())
                     ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
                     ->select('activities.*', 'activity_fotos.foto')
                     ->get();
+        abort_if($activityDetail->isEmpty(), 404);
         $product = DB::table('products')->get();
         $country = DB::table('countries')->get();
         return view('pages.activity-detail', ['activityDetail' => $activityDetail, 'products' => $product, 'country' => $country,]);
     }
 
-    public function tourDetail($slug){
+    public function tourDetail(Request $request, $slug){
 
-        $defaultLocale = config('app.locale');
         $tur = DB::table('tour_packages')->where('tour_packages.slug', $slug)
+                        ->when($request->routeIs('tour_packages.detail'), fn ($query) => $query->where('tour_packages.lang', app()->getLocale()))
                         ->join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
                         ->select('tour_packages.*', 'tour_fotos.foto')
                         ->get();
+        abort_if($tur->isEmpty(), 404);
+        $tour = $tur->first();
+        $defaultLocale = $tour->lang;
+        app()->setLocale($defaultLocale);
+        $reviewReservation = null;
+        if ($request->routeIs('tour_reviews.form')) {
+            $reviewReservation = $this->reviewReservation($request->query(), $tour->code);
+        }
         $destinasi = DB::table('destinations')->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
                         ->where('lang', $defaultLocale)
                         ->select('destinations.*', 'destination_fotos.foto')
@@ -203,41 +275,172 @@ class bookingController extends Controller
                         ->select('activities.*', 'activity_fotos.foto')
                         ->get();
                         // dd($tur);
-        return view('pages.tour-detail',[
-            'tourDetail' => $tur,
-            'destinasi' => $destinasi,
-            'activities' => $activity
-            ] );
-    }
-
-    public function mixDetail($slug){
-
-        $defaultLocale = config('app.locale');
-        $tur = DB::table('tour_packages')->where('tour_packages.slug', $slug)
-                        ->join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
-                        ->select('tour_packages.*', 'tour_fotos.foto')
-                        ->get();
-        $destinasi = DB::table('destinations')->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
-                        ->where('lang', $defaultLocale)
-                        ->select('destinations.*', 'destination_fotos.foto')
-                        ->get();
-        $activity = DB::table('activities')->where('lang', $defaultLocale)
-                        ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
-                        ->select('activities.*', 'activity_fotos.foto')
-                        ->get();
-                        // dd($tur);
-        $product = DB::table('products')->where('slug', $slug)->get();
-        return view('pages.mix-detail',[
+        $reviews = Review::where('product_code', $tour->code)
+            ->where('status', 'active')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+        $response = response()->view('pages.tour-detail', [
             'tourDetail' => $tur,
             'destinasi' => $destinasi,
             'activities' => $activity,
-            'mixDetail' => $product
+            'reviews' => $reviews,
+            'reviewReservation' => $reviewReservation,
+            'ratings' => Review::ratingSummaries([$tour->code]),
+        ]);
+        if ($reviewReservation) {
+            $response->headers->set('Referrer-Policy', 'no-referrer');
+            $response->headers->set('Cache-Control', 'private, no-store');
+        }
+        return $response;
+    }
+
+    private function reviewReservation(array $input, $serviceCode)
+    {
+        $data = Validator::make($input, [
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'booking' => ['required', 'string', 'max:255'],
+        ])->validate();
+
+        $reservation = DB::table('reservations')
+            ->where('no_reservasi', $data['booking'])
+            ->where('guest_email', $data['email'])
+            ->where('code_service', $serviceCode)
+            ->first();
+
+        abort_unless($reservation, 403, 'The review link is not valid for this booking.');
+
+        return $reservation;
+    }
+
+    public function tourReviewStore(Request $request, $slug)
+    {
+        $tour = DB::table('tour_packages')->where('slug', $slug)->first();
+        abort_unless($tour, 404);
+        return $this->storeVerifiedReview($request, $tour->code, 'tour_packages.detail', $slug);
+    }
+
+    public function productReviewStore(Request $request, $slug)
+    {
+        $product = DB::table('products')->where('slug', $slug)->first();
+        abort_unless($product, 404);
+        return $this->storeVerifiedReview($request, $product->code, 'mix_packages.detail', $slug);
+    }
+
+    private function storeVerifiedReview(Request $request, $serviceCode, $detailRoute, $slug)
+    {
+        $reservation = $this->reviewReservation($request->query(), $serviceCode);
+        $validator = Validator::make($request->only('rating', 'comment'), [
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'comment' => ['required', 'string', 'max:2000'],
+        ]);
+        if ($validator->fails()) {
+            return redirect()->to($request->fullUrl() . '#tour-reviews')
+                ->withErrors($validator)
+                ->withInput($request->only('rating', 'comment'));
+        }
+        $data = $validator->validated();
+
+        Review::create([
+            'booking_id' => $reservation->no_reservasi,
+            'product_code' => $serviceCode,
+            'guest_name' => $reservation->guest_name,
+            'guest_email' => $reservation->guest_email,
+            'comments' => $data['comment'],
+            'star_rating' => $data['rating'],
+            'status' => 'active',
+        ]);
+
+        return redirect()->route($detailRoute, $slug)
+            ->with('tour_review_success', 'Thank you for your review.');
+    }
+
+    public function tourReviewLinkForm(Request $request, $slug)
+    {
+        abort_unless($request->user()->role === 'admin', 403);
+        $tour = DB::table('tour_packages')->where('slug', $slug)->first();
+        abort_unless($tour, 404);
+        return response()->view('admin.pages.tour-review-link', ['tour' => $tour])
+            ->header('Cache-Control', 'private, no-store');
+    }
+
+    public function tourReviewLinkCreate(Request $request, $slug)
+    {
+        abort_unless($request->user()->role === 'admin', 403);
+        $tour = DB::table('tour_packages')->where('slug', $slug)->first();
+        abort_unless($tour, 404);
+        $data = $request->validate([
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'booking' => ['required', 'string', 'max:255'],
+        ]);
+        $reservation = DB::table('reservations')
+            ->where('no_reservasi', $data['booking'])
+            ->where('guest_email', $data['email'])
+            ->where('code_service', $tour->code)
+            ->exists();
+        if (!$reservation) {
+            throw ValidationException::withMessages([
+                'booking' => 'No booking matches this email, booking number and tour.',
+            ]);
+        }
+
+        $link = URL::temporarySignedRoute('tour_reviews.form', now()->addDays(30), [
+            'slug' => $slug,
+            'email' => $data['email'],
+            'booking' => $data['booking'],
+        ]);
+
+        return response()->view('admin.pages.tour-review-link', ['tour' => $tour, 'reviewLink' => $link])
+            ->header('Cache-Control', 'private, no-store');
+    }
+
+    public function mixDetail(Request $request, $slug){
+
+        $defaultLocale = app()->getLocale();
+        $tur = DB::table('tour_packages')->where('tour_packages.slug', $slug)
+                        ->join('tour_fotos', 'tour_fotos.code', 'tour_packages.code')
+                        ->select('tour_packages.*', 'tour_fotos.foto')
+                        ->get();
+        $destinasi = DB::table('destinations')->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
+                        ->where('lang', $defaultLocale)
+                        ->select('destinations.*', 'destination_fotos.foto')
+                        ->get();
+        $activity = DB::table('activities')->where('lang', $defaultLocale)
+                        ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
+                        ->select('activities.*', 'activity_fotos.foto')
+                        ->get();
+                        // dd($tur);
+        $product = DB::table('products')->where('slug', $slug)
+            ->when($request->routeIs('mix_packages.detail'), fn ($query) => $query->where('lang', app()->getLocale()))
+            ->get();
+        abort_if($product->isEmpty(), 404);
+        $service = $product->first();
+        app()->setLocale($service->lang ?: app()->getLocale());
+        $reviewReservation = $request->routeIs('product_reviews.form')
+            ? $this->reviewReservation($request->query(), $service->code)
+            : null;
+        $reviews = Review::where('product_code', $service->code)
+            ->where('status', 'active')->orderByDesc('created_at')->limit(5)->get();
+        $response = response()->view('pages.mix-detail',[
+            'tourDetail' => $tur,
+            'destinasi' => $destinasi,
+            'activities' => $activity,
+            'mixDetail' => $product,
+            'itineraryItems' => ProductItinerary::resolve($service->itinerary),
+            'reviews' => $reviews,
+            'reviewReservation' => $reviewReservation,
+            'ratings' => Review::ratingSummaries([$service->code]),
             ] );
+        if ($reviewReservation) {
+            $response->headers->set('Referrer-Policy', 'no-referrer');
+            $response->headers->set('Cache-Control', 'private, no-store');
+        }
+        return $response;
     }
 
     public function hotelDetail($slug){
 
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $code = Booking::where('slug', $slug)->first();
         $hotel = Booking::where('bookings.code', $code->code)->where('bookings.lang', $defaultLocale)
                     ->join('room_fotos', 'room_fotos.code', 'bookings.code')
@@ -270,7 +473,7 @@ class bookingController extends Controller
     }
 
     public function galeri(){
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         $hotel = Booking::where('bookings.lang', $defaultLocale)->get();
         $galeri = Gallery::where('lang', $defaultLocale)->get();
 
@@ -281,7 +484,7 @@ class bookingController extends Controller
 
     }
     public function transfer(){
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         // $hotel = Booking::where('bookings.lang', $defaultLocale)->get();
 
         return view('pages.transfer',[
@@ -291,7 +494,7 @@ class bookingController extends Controller
     }
 
     public function event(){
-        $defaultLocale = config('app.locale');
+        $defaultLocale = app()->getLocale();
         // $code = Gallery::where('slug', $slug)->first();
         $artikel = Artikel::where('lang', $defaultLocale)->get();
 
@@ -310,7 +513,7 @@ class bookingController extends Controller
     }
 
     public function rate(Request $request){
-        // $defaultLocale = config('app.locale');
+        // $defaultLocale = app()->getLocale();
         // $code = Gallery::where('slug', $slug)->first();
         $cekin = $request->start;
         $cekout = $request->end ;
@@ -352,7 +555,7 @@ class bookingController extends Controller
     }
 
     // public function cekAllotment(Request $request){
-    //     // $defaultLocale = config('app.locale');
+    //     // $defaultLocale = app()->getLocale();
     //     // $code = Gallery::where('slug', $slug)->first();
     //     $stok = Rate::where('tgl', $request->date)->where('kode_kamar', $request->code)->get();
 
@@ -373,6 +576,8 @@ class bookingController extends Controller
 
     public function reviewstore(Request $request){
 
+        abort_if(DB::table('tour_packages')->where('code', $request->product_code)->exists()
+            || DB::table('products')->where('code', $request->product_code)->exists(), 403);
         $post = Review::create([
             'booking_id' => $request->booking_id,
             'product_code' => $request->product_code,

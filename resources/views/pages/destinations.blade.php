@@ -7,7 +7,7 @@
 @section('content')
     
     <!-- Page Title -->
-    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/banner/{{ $banner ?? 'ubud.webp' }});">
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(/assets/img/banner/{{ $banner ?? 'ubud.webp' }});">
       <div class="container position-relative">
         <h1>Destinations</h1>
         <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
