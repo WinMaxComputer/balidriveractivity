@@ -58,11 +58,8 @@ Route::prefix('{locale}')->where(['locale' => 'en|id'])->group(function () {
     Route::get('/about-us', function () { return view('pages.about'); })->name('about-us');
     Route::get('/transfer', [App\Http\Controllers\TransferOrderController::class, 'show'])->name('transfer');
     Route::get('/events', [App\Http\Controllers\bookingController::class , 'event'])->name('events');
-    Route::get('/transport', [App\Http\Controllers\bookingController::class , 'transport'])->name('transport');
     Route::get('/tour_packages', [App\Http\Controllers\bookingController::class , 'tour'])->name('tour_packages');
-    Route::get('/service', [App\Http\Controllers\bookingController::class , 'service'])->name('service');
     Route::get('/tour_packages/{slug}', [App\Http\Controllers\bookingController::class , 'tourDetail'])->name('tour_packages.detail');
-    Route::get('/mix-packages', [App\Http\Controllers\bookingController::class , 'mix'])->name('mix_packages');
     Route::get('/mix-detail/{slug}', [App\Http\Controllers\bookingController::class , 'mixDetail'])->name('mix_packages.detail');
     Route::get('/destinations', [App\Http\Controllers\bookingController::class , 'destination'])->name('destinations');
     Route::get('/destinations/{slug}', [App\Http\Controllers\bookingController::class , 'destinationDetail'])->name('destinations.detail');
@@ -122,9 +119,6 @@ Route::group(['middleware' => ['auth', EnsureAdministrator::class]], function() 
 
 
     // your routes
-    Route::get('properti', ['as' => 'pages.properti', 'uses' => 'App\Http\Controllers\PageController@properti']);
-    Route::get('icons', ['as' => 'pages.icons', 'uses' => 'App\Http\Controllers\PageController@icons']);
-    Route::get('rooms', ['as' => 'pages.rooms', 'uses' => 'App\Http\Controllers\PageController@rooms']);
     Route::get('rates', ['as' => 'pages.rates', 'uses' => 'App\Http\Controllers\PageController@rates']);
     Route::get('orders', [App\Http\Controllers\PageController::class, 'orders'])->name('pages.orders');
     Route::get('transfer-orders', [App\Http\Controllers\TransferOrderController::class, 'index'])->name('pages.transfer-order');
@@ -139,12 +133,6 @@ Route::group(['middleware' => ['auth', EnsureAdministrator::class]], function() 
     // Route::get('activity', ['as' => 'pages.activity', 'uses' => 'App\Http\Controllers\PageController@activity']);
     Route::get('activity/{slug}', [App\Http\Controllers\PageController::class, 'activity'])->name('pages.activity');
     Route::get('products/{slug}', ['as' => 'pages.products', 'uses' => 'App\Http\Controllers\PageController@products']);
-    //============room
-    Route::get('room-add', ['as' => 'pages.room_add', 'uses' => 'App\Http\Controllers\PageController@roomAdd']);
-    Route::post('room/media', [App\Http\Controllers\backendController::class, 'storeMedia'])->name('room.storeMedia');
-    Route::post('room/media/delete', [App\Http\Controllers\backendController::class, 'deleteMedia'])->name('room.deleteMedia');
-    Route::post('room-store', [App\Http\Controllers\backendController::class, 'store'])->name('room.store');
-    Route::get('room-edit/{room_code}', [App\Http\Controllers\backendController::class, 'edit'])->name('room.edit');
     //=========tour
     Route::get('tour-add', ['as' => 'pages.tour_add', 'uses' => 'App\Http\Controllers\PageController@tourAdd']);
     Route::post('tour/media', [App\Http\Controllers\backendController::class, 'storeMediaTour'])->name('tour.storeMedia');
@@ -180,7 +168,4 @@ Route::group(['middleware' => ['auth', EnsureAdministrator::class]], function() 
     Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show', 'register']]);
     Route::get('maps', ['as' => 'pages.maps', 'uses' => 'App\Http\Controllers\PageController@maps']);
     Route::get('notifications', ['as' => 'pages.notifications', 'uses' => 'App\Http\Controllers\PageController@notifications']);
-    Route::get('rtl', ['as' => 'pages.rtl', 'uses' => 'App\Http\Controllers\PageController@rtl']);
-    Route::get('tables', ['as' => 'pages.tables', 'uses' => 'App\Http\Controllers\PageController@tables']);
-    Route::get('typography', ['as' => 'pages.typography', 'uses' => 'App\Http\Controllers\PageController@typography']);
 });

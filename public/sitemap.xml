@@ -13,9 +13,6 @@
     <loc>https://baliscenic.com/en/events</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/transport</loc>
-            </url>
-    <url>
     <loc>https://baliscenic.com/en/tour_packages</loc>
             </url>
     <url>
@@ -43,9 +40,6 @@
     <loc>https://baliscenic.com/id/events</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/transport</loc>
-            </url>
-    <url>
     <loc>https://baliscenic.com/id/tour_packages</loc>
             </url>
     <url>
@@ -70,31 +64,31 @@
     <loc>https://baliscenic.com/en/tour_packages/South-Bali-Tour</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/tour_packages/Tour-Bali-Selatan-by-theswand</loc>
+    <loc>https://baliscenic.com/id/tour_packages/Tour-Bali-Selatan-by-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/tour_packages/full-day-tour-north-of-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/en/tour_packages/full-day-tour-north-of-bali-by-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/tour_packages/tur-sehari-ke-bali-utara-by-theswand</loc>
+    <loc>https://baliscenic.com/id/tour_packages/tur-sehari-ke-bali-utara-by-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/tour_packages/east-of-bali-tour-with-us-theswand</loc>
+    <loc>https://baliscenic.com/en/tour_packages/east-of-bali-tour-with-us-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/tour_packages/tur-bali-timur-bersama-kami-theswand</loc>
+    <loc>https://baliscenic.com/id/tour_packages/tur-bali-timur-bersama-kami-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/tour_packages/west-of-bali-tour-by-theswand</loc>
+    <loc>https://baliscenic.com/en/tour_packages/west-of-bali-tour-by-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/tour_packages/tur-menyenangkan-ke-daerah-bali-barat-heswand</loc>
+    <loc>https://baliscenic.com/id/tour_packages/tur-menyenangkan-ke-daerah-bali-barat-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/tour_packages/kintamani-tour-with-theswand</loc>
+    <loc>https://baliscenic.com/en/tour_packages/kintamani-tour-with-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/tour_packages/tur-ke-kawasan-kintamani-bali-bersama-theswand</loc>
+    <loc>https://baliscenic.com/id/tour_packages/tur-ke-kawasan-kintamani-bali-bersama-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/mix-detail/batur-trekking-from-ubud-area</loc>
@@ -151,25 +145,25 @@
     <loc>https://baliscenic.com/en/destinations/mongkey-forest-ubud-bali-tour</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/mongkey-forest-ubud-bali-tur-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/mongkey-forest-ubud-bali-tur-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/destinations/tegenungan-waterfall-gianyar-the-swand</loc>
+    <loc>https://baliscenic.com/en/destinations/tegenungan-waterfall-gianyar-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/tegenungan-waterfall-berlokasi-di-gianyar-the-swand</loc>
+    <loc>https://baliscenic.com/id/destinations/tegenungan-waterfall-berlokasi-di-gianyar-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/visit-celuk-art-village-at-gianyar</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/kunjungi-desa-seni-celuk-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/kunjungi-desa-seni-celuk-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/bali-bird-park</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/bali-bird-park-bersa,a-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/bali-bird-park-bersa,a-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/bali-zoo-park</loc>
@@ -187,13 +181,13 @@
     <loc>https://baliscenic.com/en/destinations/umah-bali-kuno-tapak-siring</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/umah-bali-kuno-tapak-siring-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/umah-bali-kuno-tapak-siring-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/batuan-temple-ubud</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/batuan-temple-ubud-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/batuan-temple-ubud-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/campuhan-ridge-walk</loc>
@@ -241,7 +235,7 @@
     <loc>https://baliscenic.com/en/destinations/tlaga-singha-ubud</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/tlaga-singha-ubud-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/tlaga-singha-ubud-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/luwak-coffee-plantation</loc>
@@ -259,7 +253,7 @@
     <loc>https://baliscenic.com/en/destinations/water-blow-nusa-dua</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/water-blow-nusa-dua-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/water-blow-nusa-dua-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/geger-beach-nusa-dua</loc>
@@ -289,7 +283,7 @@
     <loc>https://baliscenic.com/en/destinations/karma-beach-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/pantai-karma-nusa-dua-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/pantai-karma-nusa-dua-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/padang-padang-beach-nusa-dua-bali</loc>
@@ -325,7 +319,7 @@
     <loc>https://baliscenic.com/en/destinations/garuda-wisnu-kencana-gwk-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/garuda-wisnu-kencana-gwk-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/garuda-wisnu-kencana-gwk-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/taman-ayun-temple</loc>
@@ -352,7 +346,7 @@
     <loc>https://baliscenic.com/id/destinations/air-terjun-nungnung-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/destinations/jatiluwih-rice-terrace-bali-by-the-swand</loc>
+    <loc>https://baliscenic.com/en/destinations/jatiluwih-rice-terrace-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/id/destinations/sawah-terasering-jatiluwih-bali</loc>
@@ -373,7 +367,7 @@
     <loc>https://baliscenic.com/en/destinations/ulun-danu-beratan-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/ulun-danu-beratan-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/ulun-danu-beratan-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/handara-gate-bali</loc>
@@ -415,7 +409,7 @@
     <loc>https://baliscenic.com/en/destinations/the-blooms-garden-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/the-blooms-garden-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/the-blooms-garden-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/lovina-beach-north-of-bali</loc>
@@ -427,7 +421,7 @@
     <loc>https://baliscenic.com/en/destinations/kerta-gosa-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/destinations/kerta-gosa-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/id/destinations/kerta-gosa-bali-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/destinations/goa-lawah-temple</loc>
@@ -436,34 +430,34 @@
     <loc>https://baliscenic.com/id/destinations/pura-goa-lawah-bali</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/activities/mount-batur-trekking-by-theswand</loc>
+    <loc>https://baliscenic.com/en/activities/mount-batur-trekking-by-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/id/activities/treking-ke-gunung-batur</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/activities/jeep-batur-sunrise-activiti-with-theswand</loc>
+    <loc>https://baliscenic.com/en/activities/jeep-batur-sunrise-activiti-with-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/id/activities/aktivitas-menaiki-mobil-jeep</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/activities/atv-ride-activity-from-theswand</loc>
+    <loc>https://baliscenic.com/en/activities/atv-ride-activity-from-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/activities/aktivitas-menaiki-kendaraan-segala-medan-theswand</loc>
+    <loc>https://baliscenic.com/id/activities/aktivitas-menaiki-kendaraan-segala-medan-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/en/activities/riding-horse-in-bali-by-theswand</loc>
+    <loc>https://baliscenic.com/en/activities/riding-horse-in-bali-by-bali-scenic</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/activities/menunggangi-kuda-dibali-bersama-theswand</loc>
+    <loc>https://baliscenic.com/id/activities/menunggangi-kuda-dibali-bersama-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/activities/bali-safari-marine-park</loc>
             </url>
     <url>
-    <loc>https://baliscenic.com/id/activities/bali-safari-marine-park-bersama-theswand</loc>
+    <loc>https://baliscenic.com/id/activities/bali-safari-marine-park-bersama-bali-scenic</loc>
             </url>
     <url>
     <loc>https://baliscenic.com/en/activities/bali-cycling-tour</loc>

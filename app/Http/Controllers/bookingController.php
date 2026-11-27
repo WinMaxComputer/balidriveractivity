@@ -28,12 +28,6 @@ use Illuminate\Support\Facades\DB;
 class bookingController extends Controller
 {
     //
-    public function transport(){
-        $defaultLocale = app()->getLocale();
-        $kamar = Booking::where('bookings.lang', $defaultLocale)->get();
-        $transport = Transport::where('transports.lang', $defaultLocale)->get();
-        return view('pages.transport',['transport' => $transport] );
-    }
 
     public function tour(Request $request){
         $perPage = $request->query('per_page', 100);
@@ -133,34 +127,7 @@ class bookingController extends Controller
         return view('pages.hotel',['hotels' => $hotel, 'rate' => $rate, 'fasilitas' => $fasilitas] );
     }
 
-    public function service(){
-        
-
-        $defaultLocale = app()->getLocale();
-        $kamar = Booking::where('bookings.lang', $defaultLocale)->get();
-        $transport = Transport::where('transports.lang', $defaultLocale)->get();
-        $detinasi = Destination::where('destinations.lang', $defaultLocale)->get();
-        $tur = TourPackage::where('tour_packages.lang', $defaultLocale)
-                            // ->join('destinations', 'tour_packages.destination', 'like', 'destinations.code_dst' )
-                            ->get();
-        $paket = Package::where('lang', $defaultLocale)->get();
-
-        $date = Carbon::now()->format('Y-m-d');
-        $fasilitas = Facility::all();
-        $rate = DB::table('rates')->where('tgl', $date)->get();
-        $artikel = Artikel::where('lang', $defaultLocale)->get();
-
-        return view('pages.service',[
-            'kamar' => $kamar, 
-            'transport' => $transport,
-            'destination' => $detinasi,
-            'tour' => $tur,
-            'paket' => $paket,
-            'fasilitas' => $fasilitas,
-            'rate' => $rate,
-            'artikel' => $artikel,
-            ] );
-    }
+    
 
     public function home(){
 

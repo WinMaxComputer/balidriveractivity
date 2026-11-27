@@ -1,7 +1,7 @@
-<img src="{{ $message->embed('assets/img/swan_email.jpg') }}">
+<img src="{{ $message->embed(public_path('assets/img/logo.webp')) }}" alt="Bali Scenic">
 
 <h3>Booking Confirm</h3>
-<h3>The Swnad</h3>
+<h3>Bali Scenic</h3>
 
 <p>Book On : {{ $tgl_reservasi }}<br />
 Booking ID : {{ $no_reservasi }}</p>
@@ -59,7 +59,7 @@ Booking ID : {{ $no_reservasi }}</p>
 </table>
 
 <ul>
-	<li>Payment {{ $type_bayar }} Is Paid To The Swand</li>
+	<li>Payment {{ $type_bayar }} Is Paid To Bali Scenic</li>
 </ul>
 
 <p>&nbsp;</p>

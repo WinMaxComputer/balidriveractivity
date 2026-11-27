@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('meta')
-    <title>The Swand - {{ $tourDetail[0]->tour_name }}</title>
+    <title>Bali Scenic - {{ $tourDetail[0]->tour_name }}</title>
     <meta content="{!! $tourDetail[0]->itinerary !!}" name="description">
     <meta content="{{ $tourDetail[0]->slug }}" name="keywords">
 @endsection

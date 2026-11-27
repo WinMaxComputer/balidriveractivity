@@ -297,7 +297,7 @@
 <div class="container-fluid">
     <div class="copyright">
         © 2020 made with <i class="tim-icons icon-heart-2"></i> by
-        <a href="https://the-swand.com" target="_blank">Creative Tim</a> &amp;
+        <a href="https://www.creative-tim.com" target="_blank" rel="noopener noreferrer">Creative Tim</a>
  
     </div>
 </div>

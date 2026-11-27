@@ -438,8 +438,11 @@ class PageController extends Controller
     }
     public function activityAdd()
     {
-        // $defaultLocale = config('app.locale');
-        return view('admin.pages.activity_add');
+        $travelAreas = DB::table('travel_area')->orderBy('id')->get(['id', 'name']);
+        $existingActivities = DB::table('activities')->orderBy('name')->get(['code', 'name', 'lang'])
+            ->filter(fn ($activity) => is_string($activity->code) && $activity->code !== '')
+            ->groupBy('code');
+        return view('admin.pages.activity_add', compact('travelAreas', 'existingActivities'));
     }
     public function products(Request $request, $slug){
         $search = $request->query('q');

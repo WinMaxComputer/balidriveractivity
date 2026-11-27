@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Support\ProductItinerary;
+use App\Support\LocalizedRoutes;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Validator;
 
@@ -366,78 +369,101 @@ class backendController extends Controller
 
     public function storeActivity(Request $request)
     {
-        try{
-            $exception = DB::transaction(function() use ($request){ 
-            
-                $data = $request->all();
-                $data['document'] = $data['document'] ?? [];
-                $data['parent_type'] = $data['parent_type'] ?? [];
-                $data['destination'] = $data['destination'] ?? [];
+        $id = $request->validate(['id' => ['nullable', 'integer', Rule::exists('activities', 'id')]])['id'] ?? null;
+        $existing = $id ? DB::table('activities')->where('id', $id)->first() : null;
+        $areaIds = DB::table('travel_area')->pluck('id')->map(fn ($area) => (string) $area)->all();
+        $legacyAreas = array_filter(explode(';', $existing->area ?? ''), 'strlen');
+        $types = array_filter(['land', 'air', 'water', $existing->type ?? null], fn ($value) => is_string($value) && $value !== '');
+        $languages = array_filter([...LocalizedRoutes::LOCALES, $existing->lang ?? null], fn ($value) => is_string($value) && $value !== '');
 
-                $gmbr = "";
-                $foto = $data['document'];
-                foreach($foto as $ft){
-                    $gmbr = $gmbr.$ft.";" ;
+        $data = $request->validate([
+            'code' => [$id ? 'required' : 'nullable', 'string', 'max:20', ...(!$id ? [Rule::exists('activities', 'code')] : [])],
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:65535'],
+            'lang' => ['required', 'string', Rule::in($languages)],
+            'type' => ['required', 'string', Rule::in($types)],
+            'area' => ['required', 'array', 'min:1', function ($attribute, $value, $fail) {
+                if (is_array($value) && strlen(implode(';', array_filter($value, 'is_string')).';') > 100) {
+                    $fail('The selected areas exceed the allowed length.');
                 }
-                // $type = implode(';', $data['type']);
-                $project = DB::table('activities')->upsert([
-                    'id' => $data['id'],
-                    'code' => $data['code'],
-                    'deskripsi' => $data['deskripsi'],
-                    'name' => $data['name'],
-                    'slug' => $data['slug'],
-                    'type' => $data['type'],
-                    'lang' => $data['lang'],
-                    'area' => $data['area'],
-                    'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
-                    'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
-                ], 'id');
-                DB::table('activity_fotos')->upsert([
-                    'code' => $data['code'],
-                    'foto' => $gmbr,
-                    'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
-                    'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
-                ], 'code');
+            }],
+            'area.*' => ['required', 'string', 'distinct', Rule::in(array_merge($areaIds, $legacyAreas))],
+            'deskripsi' => ['nullable', 'string'],
+            'document' => ['nullable', 'array'],
+            'document.*' => ['required', 'string', 'max:255'],
+        ]);
 
-                DB::commit();
-            });
-            if(is_null($exception)) {
-                // return response()->json([
-                //     'success' => true,
-                //     'message' => 'Post Berhasil Diupdate!',
-                // ], 200);
-                return redirect()->route('pages.activity', 'all');
-            } else {
-                DB::rollback();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Post Gagal Diupdate!',
-                ], 500);
-                // return redirect()->route('pages.room_add');
+        $code = $id ? $data['code'] : ($data['code'] ?? null);
+        if ($code && (!$existing || $code !== $existing->code || $data['lang'] !== $existing->lang)) {
+            $duplicate = DB::table('activities')->where('code', $code)->where('lang', $data['lang'])
+                ->when($id, fn ($query) => $query->where('id', '!=', $id))->exists();
+            if ($duplicate) {
+                throw ValidationException::withMessages(['code' => 'This activity already has a translation in the selected language.']);
             }
-        } catch (\Exception $e) {
-            DB::rollback();
-            // something went wrong
-            return response()->json([
-             'success' => false,
-             'message' => 'exception'.$e,
-         ], 400);
-            // return redirect()->route('pages.room_add');
         }
 
-        // return redirect()->route('pages.rooms');
+        $activity = [
+            'name' => $data['name'], 'slug' => $data['slug'], 'lang' => $data['lang'],
+            'type' => $data['type'], 'area' => implode(';', $data['area']).';',
+            'deskripsi' => $data['deskripsi'] ?? '', 'updated_at' => now(),
+        ];
+        if (!$id && !$code) {
+            for ($attempt = 0; $attempt < 5; $attempt++) {
+                $code = 'ACT-'.Str::upper(Str::random(16));
+                if (DB::table('activities')->where('code', $code)->exists()
+                    || DB::table('activity_fotos')->where('code', $code)->exists()) {
+                    continue;
+                }
+                try {
+                    DB::transaction(function () use ($data, $code, $activity) {
+                        $documents = $data['document'] ?? [];
+                        DB::table('activity_fotos')->insert([
+                            'code' => $code, 'foto' => $documents ? implode(';', $documents).';' : '',
+                            'created_at' => now(), 'updated_at' => now(),
+                        ]);
+                        DB::table('activities')->insert(['code' => $code] + $activity + ['created_at' => now()]);
+                    });
+                    return redirect()->route('pages.activity', 'all');
+                } catch (UniqueConstraintViolationException $exception) {
+                    if (!DB::table('activity_fotos')->where('code', $code)->exists()) {
+                        throw $exception;
+                    }
+                }
+            }
+            throw ValidationException::withMessages(['code' => 'Could not generate an activity code. Please try again.']);
+        }
+
+        DB::transaction(function () use ($data, $id, $code, $activity) {
+            $activity = ['code' => $code] + $activity;
+            if ($id) {
+                DB::table('activities')->where('id', $id)->update($activity);
+            } else {
+                DB::table('activities')->insert($activity + ['created_at' => now()]);
+            }
+            $documents = $data['document'] ?? [];
+            if ($id || $documents || !DB::table('activity_fotos')->where('code', $code)->exists()) {
+                DB::table('activity_fotos')->upsert([
+                    'code' => $code,
+                    'foto' => $documents ? implode(';', $documents).';' : '',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ], ['code'], ['foto', 'updated_at']);
+            }
+        });
+
+        return redirect()->route('pages.activity', 'all');
     }
 
     public function editActivity($code){
         // $tourDetail = DB::table('tour_packages')->where('code', $room_code)->first();
         // return redirect()->route('pages.room_add');
         $activityDetail = DB::table('activities')->where('activities.id', $code)
-                    ->join('activity_fotos', 'activity_fotos.code', 'activities.code')
+                    ->leftJoin('activity_fotos', 'activity_fotos.code', 'activities.code')
                     ->select('activities.*', 'activity_fotos.foto')
                     ->first();
-
-
-        return view('admin.pages.activity_add', compact('activityDetail'));
+        abort_unless($activityDetail, 404);
+        $travelAreas = DB::table('travel_area')->orderBy('id')->get(['id', 'name']);
+        return view('admin.pages.activity_add', compact('activityDetail', 'travelAreas'));
 
     }
 

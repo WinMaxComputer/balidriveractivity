@@ -31,6 +31,8 @@ Ratings on the home page, tour listings, and tour or product details average all
 
 Users with the `admin` role can open **Booking** in the admin sidebar to search, sort, and page through records from `reservations`. Bookings made through WhatsApp are not automatically stored in this table.
 
+The admin dashboard shows the five latest bookings, transfer requests, and reviews. Best-selling products and tours are ranked by the number of reservations excluding cancelled bookings; pending payments are included. Codes shared by both product and tour records are excluded because reservations do not identify their service type. Translated records sharing a code do not increase the count.
+
 Order details can generate a tour review link when the service code matches a tour package. Deleting an order permanently removes its associated room details and invalidates its review link; it does not restore stock, change payments, or process a refund.
 
 Order details show the matching product or tour name alongside its service code and can generate a review link for a matching product (Mix or Activity). Product reviews appear on the product detail page. If a service code matches both a tour and a product, both names are shown as ambiguous and the link is unavailable until the code is unambiguous.
@@ -63,6 +65,8 @@ Customer accounts cannot access admin routes or the file manager. Email sign-in 
 
 Each itinerary stop can reference an activity or destination and include an optional note. Referenced places are automatically added to the product's activity or destination categories; removing a stop does not remove a category selected separately. Product details show links and up to three photos from the referenced place. Existing text itineraries remain supported. New itineraries are stored as versioned JSON in `products.itinerary`.
 
+The activity form uses selectable languages, activity types, and multiple travel areas. New activities receive an automatic code; select an existing activity when adding its translation. Translations share a code and photo gallery, and adding a translation without photos keeps the existing gallery.
+
 ## Public language URLs and sitemap
 
 Indexable public pages use `/en` or `/id` prefixes. The site default (`locale` in `config/app.php`) is used on the first visit; subsequent visits use the selected language. Old public URLs redirect to the appropriate prefixed URL. Admin, checkout, customer pages, OAuth callbacks, and existing signed review links keep their original URLs.
@@ -70,6 +74,8 @@ Indexable public pages use `/en` or `/id` prefixes. The site default (`locale` i
 Language switches preserve search parameters and use the translated detail slug for records sharing the same service code. If a translation is missing, the visitor remains on the original-language page and sees a notice. Prefixes do not automatically translate content that has not been provided.
 
 Set `APP_URL` to the public production origin before deploying. `/sitemap` dynamically returns a Spatie XML sitemap with available public URLs for both languages, excluding private pages. To publish a static `public/sitemap.xml`, run `php artisan sitemap:generate` after configuring `APP_URL` and repeat it whenever public content or translations change. Existing static files may be served directly by the web server; regenerating the file is necessary to replace an older sitemap at `/sitemap.xml`.
+
+The branding migration replaces the former brand in existing content slugs and lodging descriptions without deleting content. Back up the database before running migrations: this data migration cannot be automatically reversed. Old changed URLs are not redirected, and previously generated signed review links containing those slugs will no longer work; generate new links. Regenerate the sitemap after migrating.
 
 ## Learning Laravel
 

@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('meta')
-    <title>The Swand - Contact US</title>
+    <title>Bali Scenic - Contact US</title>
     <meta content="We are company that manage property and also rent for acomodation." name="description">
     <meta content="room booking, manage hotel, manage villa, transport, travel, tour" name="keywords">
 @endsection
@@ -92,17 +92,6 @@
                 <h3>Our Office Address</h3>
                 <p>AJalan Genta Sari Blok IV Gang Amerta Sari No 7 <br>
               Dalung Badung Bali- ID 80361</p>
-              </div>
-            </div>
-          </div> -->
-          <!-- End Info Item -->
-
-          <!-- <div class="col-md-6">
-            <div class="info-item d-flex align-items-center">
-              <i class="icon bi bi-envelope flex-shrink-0"></i>
-              <div>
-                <h3>Email Us</h3>
-                <p>the.swand26@gmail.com</p>
               </div>
             </div>
           </div> -->
