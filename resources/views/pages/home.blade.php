@@ -66,14 +66,16 @@
                   <div class="tour-image">
                     @php $gmbr = explode(";",$prd->product_foto) ; @endphp
                     <img src="{{asset('assets/img/products/'.$gmbr[0] ) }}" alt="Serene Beach Retreat" class="img-fluid" loading="lazy">
+                    @include('includes.product-recommendation-badge', ['product' => $prd])
                     <div class="tour-price">{{ session('currency', 'USD') }} {{ number_format(convertPrice($prd->price, session('currency', 'USD')), 0) }} / Pax</div>
                     
                   </div>
                   <div class="tour-content">
                     <h5>{{ $prd->product_name }}</h5>
                     <div class="tour-meta">
-                      <span class="duration"><i class="bi bi-clock"></i> 8 Days</span>
-                      <span class="group-size"><i class="bi bi-people"></i> Max 6</span>
+                      @if (!empty($prd->tour_duration))
+                        <span class="duration"><i class="bi bi-clock"></i> {{ $prd->tour_duration }}</span>
+                      @endif
                     </div>
                     
                     <!-- @php $convertedPrice = round($prd->price * session('currency_rate', 1), 2); @endphp -->
@@ -264,58 +266,103 @@
 
     </section><!-- /Featured Destinations Section -->
 
-    <!-- Featured Tours Section -->
-    <section id="featured-tours" class="featured-tours section">
+    <section id="featured-activities" class="home-activities section">
+      <div class="container">
+        <div class="activities-heading" data-aos="fade-up">
+          <div>
+            <span class="activities-eyebrow">MADE FOR YOUR BALI STORY</span>
+            <h2>Find Your Next <span>Adventure</span></h2>
+          </div>
+          <p>Explore local experiences, from ocean adventures to cultural discoveries.</p>
+        </div>
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Featured Tours</h2>
-        <div><span>Check Our</span> <span class="description-title">Featured Tours</span></div>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row gy-4">
-          @foreach ($tour as $tur)
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="tour-card">
-              <div class="tour-image">
-                @php $gmbr = explode(";",$tur->foto) ; @endphp
-                <img src="{{asset('assets/img/tour/'.$gmbr[0] ) }}" alt="Serene Beach Retreat" class="img-fluid" loading="lazy">
-                <div class="tour-price">$2,150</div>
-              </div>
-              <div class="tour-content">
-                <h4>{{ $tur->tour_name }}</h4>
-                <div class="tour-meta">
-                  <span class="duration"><i class="bi bi-clock"></i> 8 Days</span>
-                  <span class="group-size"><i class="bi bi-people"></i> Max 6</span>
+        <div class="row g-4">
+          @forelse (($activities ?? collect())->take(6) as $activity)
+            @php
+              $activityPhotos = explode(';', (string) ($activity->foto ?? ''));
+              $activityImage = trim($activityPhotos[0] ?? '');
+              $activityType = trim((string) ($activity->type ?? 'Experience'));
+            @endphp
+            <div class="col-lg-2 col-md-4 col-6" data-aos="fade-up" data-aos-delay="{{ 100 + ($loop->index * 100) }}">
+              <a href="{{ route('activities.detail', $activity->slug) }}" class="home-activity-card">
+                <img
+                  src="{{ $activityImage !== '' ? asset('assets/img/activity/'.$activityImage) : asset('assets/img/banner/act.webp') }}"
+                  alt="{{ $activity->name }}"
+                  class="home-activity-image"
+                  loading="lazy">
+                <span class="home-activity-number">{{ sprintf('%02d', $loop->iteration) }}</span>
+                <div class="home-activity-content">
+                  <span class="home-activity-type">{{ $activityType }}</span>
+                  <h3>{{ $activity->name }}</h3>
+                  <p>{{ \Illuminate\Support\Str::limit(strip_tags($activity->deskripsi ?? ''), 125) }}</p>
+                  <span class="home-activity-link">Explore activity <i class="bi bi-arrow-up-right"></i></span>
                 </div>
-                <p>Mauris ipsum neque, cursus ac ipsum at, iaculis facilisis ligula. Suspendisse non sapien vel enim cursus semper.</p>
-                <div class="tour-highlights">
-                  <span>Maldives</span>
-                  <span>Seychelles</span>
-                  <span>Bora Bora</span>
-                </div>
-                <div class="tour-action">
-                  <a href="booking.html" class="btn-book">Book Now</a>
-                  @include('includes.rating-summary', ['rating' => $ratings->get($tur->code)])
-                </div>
-              </div>
+              </a>
             </div>
-          </div><!-- End Tour Item -->
-          @endforeach
-
-          
-
+          @empty
+            <div class="col-12">
+              <p class="text-center mb-0">Activities are coming soon.</p>
+            </div>
+          @endforelse
         </div>
 
-        <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="500">
-          <a href="tours.html" class="btn-view-all">View All Tours</a>
+        <div class="text-center mt-5" data-aos="fade-up">
+          <a href="{{ route('activities') }}" class="home-activities-all">View all activities <i class="bi bi-arrow-right"></i></a>
         </div>
-
       </div>
+    </section>
 
-    </section><!-- /Featured Tours Section -->
+    <section id="home-travel-guides" class="home-travel-guides section">
+      <div class="container">
+        <div class="section-title" data-aos="fade-up">
+          <div>
+            <span>{{ app()->getLocale() === 'id' ? 'Jelajahi' : 'Explore' }}</span>
+            <span class="description-title">{{ app()->getLocale() === 'id' ? 'Panduan Perjalanan' : 'Travel Guides' }}</span>
+          </div>
+        </div>
+
+        <div class="special-offers">
+          <div class="row gy-4">
+            @forelse (($travelGuides ?? collect()) as $guide)
+            @php
+              $guidePhotos = array_values(array_filter(explode(';', $guide->photos ?? ''), 'strlen'));
+              $guideImage = $guidePhotos[0] ?? null;
+              $guideExcerpt = \Illuminate\Support\Str::limit($guide->meta_description ?: strip_tags($guide->content), 90);
+            @endphp
+            <article class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{{ 100 + ($loop->index * 100) }}">
+              <div class="offer-banner">
+                <div class="offer-content">
+                  <div class="discount-badge">{{ app()->getLocale() === 'id' ? 'Panduan Perjalanan' : 'Travel Guide' }}</div>
+                  <h4>{{ $guide->title }}</h4>
+                  <p>{{ $guideExcerpt }}</p>
+                  <a href="{{ route('travel_guides.detail', ['slug' => $guide->slug]) }}" class="btn btn-accent">
+                    {{ app()->getLocale() === 'id' ? 'Baca artikel' : 'Read article' }}
+                  </a>
+                </div>
+                <a href="{{ route('travel_guides.detail', ['slug' => $guide->slug]) }}" class="offer-image">
+                  <img
+                    src="{{ $guideImage ? asset('assets/img/travel-guide/'.$guideImage) : asset('assets/img/travel/showcase-8.webp') }}"
+                    alt="{{ $guide->title }}"
+                    loading="lazy">
+                </a>
+              </div>
+            </article>
+            @empty
+              <div class="col-12">
+                <p class="text-center mb-0">{{ app()->getLocale() === 'id' ? 'Belum ada artikel panduan perjalanan.' : 'No travel guides are available yet.' }}</p>
+              </div>
+            @endforelse
+          </div>
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up">
+          <a href="{{ route('travel_guides') }}" class="home-activities-all">
+            {{ app()->getLocale() === 'id' ? 'Lihat semua panduan' : 'View all travel guides' }}
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </section>
 
     <!-- Testimonials Home Section -->
     <!-- <section id="testimonials-home" class="testimonials-home section">

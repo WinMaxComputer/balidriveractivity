@@ -108,12 +108,15 @@
                   <div class="tour-image">
                     @php $gmbr = explode(";",$prd->product_foto) ; @endphp
                     <img src="{{ asset('assets/img/products/'.$gmbr[0]) }}" alt="{{ $prd->product_name }}" class="img-fluid" loading="lazy">
+                    @include('includes.product-recommendation-badge', ['product' => $prd])
                     <div class="tour-price">{{ session('currency', 'USD') }} {{ number_format(convertPrice($prd->price, session('currency', 'USD')), 0) }} / Pax</div>
                   </div>
                   <div class="tour-content">
                     <h5>{{ $prd->product_name }}</h5>
                     <div class="tour-meta">
-                      <span class="duration"><i class="bi bi-clock"></i> 8 Days</span>
+                      @if (!empty($prd->tour_duration))
+                        <span class="duration"><i class="bi bi-clock"></i> {{ $prd->tour_duration }}</span>
+                      @endif
                       <span class="group-size"><i class="bi bi-people"></i> Max 6</span>
                     </div>
                     <div class="tour-highlights">
@@ -144,48 +147,6 @@
               {{ $product->links('pagination::bootstrap-5') }}
           </div>
         </section><!-- /Pagination 2 Section -->
-        
-
-        <section class="home-tour-list">
-          <h3 class="section-subtitle mb-4">{{ $searchTerm !== '' ? 'Matching Tour Packages' : 'Featured Tours' }}</h3>
-          <div class="row gy-6">
-              @foreach ($tour as $r)
-                <div class="col-lg-3 col-md-3" data-aos="fade-up" data-aos-delay="200">
-                  <div class="tour-card">
-                    <div class="tour-image">
-                      @php $gmbr = explode(';', $r->foto); @endphp
-                      <img src="{{ asset('assets/img/tour/'.$gmbr[0]) }}" alt="{{ $r->tour_name }}" class="img-fluid" loading="lazy">
-                      <div class="tour-badge">Tour Package</div>
-                      <a class="tour-price" href="{{ route('tour_packages.detail', $r->slug) }}">View pricing</a>
-                    </div>
-                    <div class="tour-content">
-                      <h5>{{ $r->tour_name }}</h5>
-                      <div class="tour-meta">
-                        <span class="duration"><i class="bi bi-compass"></i> Bali Tour</span>
-                      </div>
-                      <div class="tour-highlights">
-                        @php $tourActivities = explode(';', $r->activity); @endphp
-                        @foreach ($activities as $activity)
-                          @if (in_array($activity->code, $tourActivities))
-                            <span>{{ $activity->name }}</span>
-                          @endif
-                        @endforeach
-                      </div>
-                      <div class="tour-action">
-                        <a href="{{ route('tour_packages.detail', $r->slug) }}" class="btn-book">View Tour</a>
-                        @include('includes.rating-summary', ['rating' => $ratings->get($r->code)])
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              @endforeach
-              @if ($tour->isEmpty() && $searchTerm !== '')
-                <p>No matching tour packages found.</p>
-              @endif
-          </div>
-        </section>
-
-        
 
         @if ($searchTerm === '')
         <!-- Special Offers -->
@@ -229,19 +190,6 @@
 
         
 
-        <!-- CTA Section -->
-        <div class="row" data-aos="fade-up" data-aos-delay="700">
-          <div class="col-12">
-            <div class="cta-section text-center">
-              <h3>Not Sure What to Choose?</h3>
-              <p>Our travel experts are here to help you find the perfect tour based on your preferences and budget.</p>
-              <div class="cta-buttons">
-                <a href="#" class="btn btn-primary me-3">Contact Our Experts</a>
-                <a href="#" class="btn btn-outline-primary">Take Our Travel Quiz</a>
-              </div>
-            </div>
-          </div>
-        </div>
         @endif
 
       </div>

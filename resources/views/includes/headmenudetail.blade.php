@@ -10,6 +10,7 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="{{ route('home') }}" class="active">Home</a></li>
+          <li><a href="{{ route('travel_guides') }}">{{ __('Travel Guide & Tips') }}</a></li>
           <!-- <li><a href="/activities">{{ __('headmenu.tour_activity') }}</a></li>
           <li><a href="/destinations">{{ __('headmenu.destinations') }}</a></li> -->
           

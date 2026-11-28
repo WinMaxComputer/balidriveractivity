@@ -31,7 +31,18 @@
           <div class="form-group col-lg-6">
             <label>Code</label>
             <input type="hidden" name="id" class="form-control" placeholder="code" value="{{ $productsDetail->id ?? '' }}" >
-            <input type="text" name="code" class="form-control" placeholder="code" value="{{ old('code', $productsDetail->code ?? '') }}" required>
+            @if (isset($productsDetail))
+              <input type="text" name="code" class="form-control" placeholder="code" value="{{ old('code', $productsDetail->code) }}" required>
+              <small>Translations of the same product share this code.</small>
+            @else
+              <select name="code" class="form-control" style="background-color: #000; color: #fff;">
+                <option value="">Generate a new code automatically</option>
+                @foreach ($existingProducts as $code => $products)
+                  <option value="{{ $code }}" @selected(old('code') === (string) $code)>{{ $products->first()->product_name }} — {{ $code }} ({{ $products->pluck('lang')->unique()->implode(', ') }})</option>
+                @endforeach
+              </select>
+              <small>Select an existing product only when adding its translation.</small>
+            @endif
           </div>
           <div class="form-group col-lg-6">
               <label>Name</label>
@@ -48,6 +59,9 @@
               <label>Lang</label>
               <select name="lang" class="form-control" style="background-color: #000; color: #fff;" required>
 
+                @if (!empty($productsDetail->lang) && !in_array($productsDetail->lang, ['en', 'id'], true))
+                  <option value="{{ $productsDetail->lang }}" @selected(old('lang', $productsDetail->lang) === $productsDetail->lang)>{{ $productsDetail->lang }} (existing)</option>
+                @endif
                 <option value="en" @selected(old('lang', $productsDetail->lang ?? 'en') === 'en')>English</option>
                 <option value="id" @selected(old('lang', $productsDetail->lang ?? 'en') === 'id')>Indonesia</option>
               </select>
@@ -59,12 +73,46 @@
               <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug" value="{{ old('slug', $productsDetail->slug ?? '') }}">
           </div>
           <div class="form-group col-lg-6">
-              <label>Meta Keyword</label>
-              <input class="form-control" id="meta_keyword" name="meta_keyword" value="{{ old('meta_keyword', $productsDetail->meta_keyword ?? '') }}">
+                <label>Estimated Tour Duration</label>
+                <input type="text" name="tour_duration" class="form-control" placeholder="e.g. 5 hours or 2 days" value="{{ old('tour_duration', $productsDetail->tour_duration ?? '') }}">
           </div>
-          <div class="form-group col-lg-6">
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <label>Recommendation Badge</label>
+              <select name="recommendation_badge" class="form-control" style="background-color: #000; color: #fff;">
+                <option value="">No badge</option>
+                <option value="popular" @selected(old('recommendation_badge', $productsDetail->recommendation_badge ?? '') === 'popular')>Popular</option>
+                <option value="best_value" @selected(old('recommendation_badge', $productsDetail->recommendation_badge ?? '') === 'best_value')>Best Value</option>
+                <option value="top_pick" @selected(old('recommendation_badge', $productsDetail->recommendation_badge ?? '') === 'top_pick')>Top Pick</option>
+              </select>
+            </div>
+            <div class="form-group col-lg-6">
               <label>Meta Description</label>
               <input class="form-control" id="meta_description" name="meta_description" value="{{ old('meta_description', $productsDetail->meta_description ?? '') }}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="meta-keyword-entry">Meta Keywords</label>
+            @php
+              $keywordInput = old('meta_keyword', $productsDetail->meta_keyword ?? '');
+              $selectedKeywords = collect(is_array($keywordInput) ? $keywordInput : preg_split('/[,;]+/', (string) $keywordInput))
+                ->filter(fn ($keyword) => is_string($keyword) && trim($keyword) !== '')
+                ->map(fn ($keyword) => trim($keyword))->unique()->values();
+            @endphp
+            <div id="meta-keyword-picker" class="form-control d-flex flex-wrap align-items-center" style="height: auto; min-height: 42px; gap: 6px;">
+              <div id="meta-keyword-tags" class="d-flex flex-wrap" style="gap: 6px;">
+                @foreach ($selectedKeywords as $keyword)
+                  <span class="badge badge-info d-inline-flex align-items-center">
+                    {{ $keyword }}
+                    <button type="button" class="remove-meta-keyword btn btn-link btn-sm p-0 ml-1 text-white" aria-label="Remove {{ $keyword }}">&times;</button>
+                    <input type="hidden" name="meta_keyword[]" value="{{ $keyword }}">
+                  </span>
+                @endforeach
+              </div>
+              <input type="text" id="meta-keyword-entry" maxlength="40" class="form-control border-0 shadow-none" style="width: 220px; flex: 1;" placeholder="Type a keyword and press Enter">
+            </div>
+            <small class="form-text text-muted">Add up to 6 keywords by pressing Enter or separating them with commas.</small>
           </div>
         </div>
         <div class="form-group">
@@ -117,6 +165,43 @@
               return this.name === name && this.value === option.dataset.code;
             }).prop('checked', true);
           }
+          function addMetaKeywords(value) {
+            value.split(/[,;\n]+/).forEach(function(keyword) {
+              keyword = $.trim(keyword);
+              if (!keyword) return;
+              var exists = $('#meta-keyword-tags input[name="meta_keyword[]"]').toArray().some(function(input) {
+                return input.value.toLowerCase() === keyword.toLowerCase();
+              });
+              if (exists) return;
+
+              var tag = $('<span>', { class: 'badge badge-info d-inline-flex align-items-center' });
+              tag.append(document.createTextNode(keyword + ' '));
+              $('<button>', {
+                type: 'button',
+                class: 'remove-meta-keyword btn btn-link btn-sm p-0 ml-1 text-white',
+                text: '×',
+                'aria-label': 'Remove ' + keyword
+              }).appendTo(tag);
+              $('<input>', { type: 'hidden', name: 'meta_keyword[]', value: keyword }).appendTo(tag);
+              $('#meta-keyword-tags').append(tag);
+            });
+          }
+          $('#meta-keyword-entry').on('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ',') {
+              event.preventDefault();
+              addMetaKeywords(this.value);
+              this.value = '';
+            }
+          }).on('blur', function() {
+            addMetaKeywords(this.value);
+            this.value = '';
+          });
+          $('#meta-keyword-picker').on('click', '.remove-meta-keyword', function() {
+            $(this).closest('.badge').remove();
+          });
+          $('form').on('submit', function() {
+            addMetaKeywords($('#meta-keyword-entry').val());
+          });
           $(document).on('change', '.itinerary-reference', function() { syncItineraryCategory(this); });
           $('.itinerary-reference').each(function() { syncItineraryCategory(this); });
           $(document).on('change', 'input[name="parent_type[]"], input[name="destination[]"]', function() {

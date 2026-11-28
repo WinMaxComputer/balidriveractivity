@@ -103,6 +103,29 @@
             <div class="needsclick dropzone" id="document-dropzone"></div>
             <small>Photos are shared by activities with the same code. Uploading photos replaces the shared gallery.</small>
           </div>
+          <div class="card">
+            <div class="card-header"><h5 class="card-title">SEO settings</h5></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="meta-title">SEO title <span id="meta-title-count">0/70</span></label>
+                <input id="meta-title" name="meta_title" class="form-control" maxlength="70" value="{{ old('meta_title', $activityDetail->meta_title ?? '') }}" placeholder="Leave empty to use the activity name">
+              </div>
+              <div class="form-group">
+                <label for="meta-description">Meta description <span id="meta-description-count">0/160</span></label>
+                <textarea id="meta-description" name="meta_description" class="form-control" maxlength="160" rows="3">{{ old('meta_description', $activityDetail->meta_description ?? '') }}</textarea>
+              </div>
+              <div class="form-group">
+                <label for="meta-keyword">Meta keywords</label>
+                <input id="meta-keyword" name="meta_keyword" class="form-control" maxlength="500" value="{{ old('meta_keyword', $activityDetail->meta_keyword ?? '') }}">
+              </div>
+              <div class="border rounded p-3">
+                <small>Search result preview</small>
+                <div id="seo-preview-title" class="text-primary mt-1"></div>
+                <div id="seo-preview-url" class="text-success small"></div>
+                <div id="seo-preview-description" class="small"></div>
+              </div>
+            </div>
+          </div>
           <button type="submit" class="btn btn-fill btn-primary">Save</button>
           <a href="{{ route('pages.activity', 'all') }}" class="btn btn-secondary">Cancel</a>
         </form>
@@ -125,10 +148,47 @@
   <script>
     var options = {
       filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-      filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
+      filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token={{ csrf_token() }}',
       filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-      filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
+      filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token={{ csrf_token() }}'
     };
+    var activityName = $('#activity-name');
+    var activitySlug = $('#activity-slug');
+    var slugManuallyEdited = {{ isset($activityDetail) ? 'true' : 'false' }};
+
+    function makeActivitySlug(value) {
+      return value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+
+    function updateSeoPreview() {
+      var name = activityName.val().trim() || 'Activity name';
+      var title = $('#meta-title').val().trim() || name + ' | Bali Activities - Bali Scenic';
+      var content = $('#deskripsi').val() || '';
+      if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.deskripsi) {
+        content = CKEDITOR.instances.deskripsi.getData();
+      }
+      var contentPreview = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (contentPreview.length > 157) contentPreview = contentPreview.substring(0, 157).trim() + '...';
+      var description = $('#meta-description').val().trim() || contentPreview || 'Add a meta description to preview this activity in search results.';
+
+      $('#meta-title-count').text($('#meta-title').val().length + '/70');
+      $('#meta-description-count').text($('#meta-description').val().length + '/160');
+      $('#seo-preview-title').text(title);
+      $('#seo-preview-url').text(window.location.origin + '/' + $('#activity-lang').val() + '/activities/' + (activitySlug.val() || 'activity-slug'));
+      $('#seo-preview-description').text(description);
+    }
+
+    activityName.on('input', function () {
+      if (!slugManuallyEdited) activitySlug.val(makeActivitySlug(this.value));
+      updateSeoPreview();
+    });
+    activitySlug.on('input', function () {
+      slugManuallyEdited = this.value !== '';
+      updateSeoPreview();
+    });
+    $('#meta-title, #meta-description, #activity-lang').on('input change', updateSeoPreview);
+    updateSeoPreview();
+
     var areaInputs = document.querySelectorAll('#activity-form input[name="area[]"]');
     function updateAreaRequirement() {
       if (areaInputs.length) {
@@ -137,7 +197,9 @@
     }
     areaInputs.forEach(function (input) { input.addEventListener('change', updateAreaRequirement); });
     updateAreaRequirement();
-    CKEDITOR.replace('deskripsi', options);
+    var editor = CKEDITOR.replace('deskripsi', options);
+    editor.on('change', updateSeoPreview);
+    editor.on('instanceReady', updateSeoPreview);
     Dropzone.options.documentDropzone = {
       url: '{{ route('activity.storeMedia') }}',
       maxFilesize: 10, // MB

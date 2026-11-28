@@ -17,7 +17,7 @@ class PublicSitemap
 
         $sitemap = Sitemap::create();
         $static = ['home', 'about-us', 'transfer', 'events', 'tour_packages',
-            'mix_packages', 'destinations', 'activities'];
+            'mix_packages', 'destinations', 'activities', 'travel_guides'];
         foreach (LocalizedRoutes::LOCALES as $locale) {
             foreach ($static as $name) {
                 $sitemap->add(Url::create($base.route($name, ['locale' => $locale], false)));

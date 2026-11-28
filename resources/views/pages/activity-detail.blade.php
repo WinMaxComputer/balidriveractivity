@@ -1,25 +1,42 @@
 @extends('layouts.default')
 @section('meta')
-    <title>{{ $activityDetail[0]->name }} - Bali Driver Activity</title>
-    <meta content="{!! $activityDetail[0]->deskripsi !!}" name="description">
-    <meta content="{{ $activityDetail[0]->slug }}" name="keywords">
+    @php
+        $activity = $activityDetail[0];
+        $seoTitle = ($activity->meta_title ?? '') ?: $activity->name.' | Bali Activities - Bali Scenic';
+        $seoDescription = ($activity->meta_description ?? '') ?: \Illuminate\Support\Str::limit(strip_tags($activity->deskripsi ?? ''), 160);
+        $translationsByLanguage = ($activityTranslations ?? collect())->keyBy('lang');
+    @endphp
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    @if (!empty($activity->meta_keyword))
+      <meta name="keywords" content="{{ $activity->meta_keyword }}">
+    @endif
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ route('activities.detail', ['slug' => $activity->slug]) }}">
+    <link rel="canonical" href="{{ route('activities.detail', ['slug' => $activity->slug]) }}">
+    @foreach (['en', 'id'] as $language)
+      @if (isset($translationsByLanguage[$language]))
+        <link rel="alternate" hreflang="{{ $language }}" href="{{ route('activities.detail', ['locale' => $language, 'slug' => $translationsByLanguage[$language]->slug]) }}">
+      @endif
+    @endforeach
 @endsection
 
 
 @php 
-$des = $activityDetail[0]->deskripsi ; 
+$des = $activityDetail[0]->deskripsi ?? '';
 $desk = explode("</p>", $des) ;
 @endphp
 @section('content')   
     <!-- Page Title -->
     <div class="page-title dark-background" data-aos="fade" style="background-image: url(/assets/img/travel/showcase-8.webp);">
       <div class="container position-relative">
-        <h1>Tour Details</h1>
-        <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
+        <h1>{{ $activityDetail[0]->name }}</h1>
         <nav class="breadcrumbs">
           <ol>
-            <li><a href="index.html">Home</a></li>
-            <li class="current">Tour Details</li>
+            <li><a href="{{ route('home') }}">Home</a></li>
+            <li class="current">Activity Details</li>
           </ol>
         </nav>
       </div>
@@ -291,6 +308,7 @@ $desk = explode("</p>", $des) ;
                     }
 
                     .activity-product-card .member-img {
+                        position: relative;
                         height: 180px;
                         overflow: hidden;
                     }
@@ -344,11 +362,15 @@ $desk = explode("</p>", $des) ;
                             @php $gmbr = explode(";",$prod->product_foto) ; @endphp
                             @php $desa = explode("</p>", $prod->product_des) ; @endphp
                             <img src="{{ asset('assets/img/products/'.$gmbr[0]) }}" class="img-fluid" alt="">
+                            @include('includes.product-recommendation-badge', ['product' => $prod])
                             <div class="social">
                             </div>
                         </div>
                         <div class="member-info">
                             <h4>{{ $prod->product_name }}</h4>
+                            @if (!empty($prod->tour_duration))
+                                <span class="duration"><i class="bi bi-clock"></i> {{ $prod->tour_duration }}</span>
+                            @endif
                             <!-- <span>Cook</span> -->
                             <p>{!! cutText($desa[0], 300, 1) !!}</p>
                         </div>

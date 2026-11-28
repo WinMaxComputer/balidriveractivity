@@ -13,6 +13,12 @@
             </li>
             
            
+            <li @if (in_array($pageSlug, ['travel-guide', 'travel-guide-add'], true)) class="active " @endif>
+                <a href="{{ route('pages.travel-guide') }}">
+                    <i class="tim-icons icon-chart-pie-36"></i>
+                    <p>{{ __('Travel Guide & Tips') }}</p>
+                </a>
+            </li>
             <li @if ($pageSlug == 'tour') class="active " @endif>
                 <a href="{{ route('pages.tour') }}">
                     <i class="tim-icons icon-chart-pie-36"></i>

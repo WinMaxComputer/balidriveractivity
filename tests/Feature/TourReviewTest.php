@@ -51,6 +51,8 @@ class TourReviewTest extends TestCase
             $table->text('dst_type')->nullable();
             $table->text('meta_keyword')->nullable();
             $table->text('meta_description')->nullable();
+            $table->string('tour_duration', 100)->nullable();
+            $table->string('recommendation_badge', 30)->nullable();
             $table->decimal('price', 10, 2);
             $table->text('itinerary')->nullable();
             $table->text('product_included')->nullable();
@@ -78,6 +80,17 @@ class TourReviewTest extends TestCase
         Schema::create('activity_fotos', function (Blueprint $table) {
             $table->string('code');
             $table->text('foto');
+        });
+        Schema::create('travel_guides', function (Blueprint $table) {
+            $table->id();
+            $table->string('code');
+            $table->string('title');
+            $table->string('slug');
+            $table->string('lang');
+            $table->text('content');
+            $table->string('meta_description')->nullable();
+            $table->text('photos')->nullable();
+            $table->timestamps();
         });
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
@@ -282,9 +295,18 @@ class TourReviewTest extends TestCase
                 'star_rating' => $rating, 'status' => $status, 'created_at' => now(), 'updated_at' => now(),
             ]);
         }
+        DB::table('travel_guides')->insert([
+            'code' => 'GUIDE1', 'title' => 'Bali Travel Guide', 'slug' => 'bali-travel-guide',
+            'lang' => 'en', 'content' => '<p>Explore Bali with local tips.</p>',
+            'meta_description' => 'Local tips for exploring Bali.',
+            'photos' => 'guide.webp;', 'created_at' => now(), 'updated_at' => now(),
+        ]);
 
         $this->get(route('home'))->assertOk()->assertSee('4.6 (7)')->assertSee('4.5 (2)')
-            ->assertDontSee('4.8 (95)');
+            ->assertDontSee('4.8 (95)')
+            ->assertSee('Bali Travel Guide')
+            ->assertSee(route('travel_guides.detail', ['slug' => 'bali-travel-guide']))
+            ->assertSee(asset('assets/img/travel-guide/guide.webp'));
         $this->get(route('tour_packages'))->assertOk()->assertSee('4.6 (7)')->assertSee('4.5 (2)')
             ->assertDontSee('4.8 (95)');
         $this->get(route('tour_packages.detail', 'bali-tour'))->assertOk()->assertSee('4.6 (7)')
@@ -459,14 +481,16 @@ class TourReviewTest extends TestCase
         $admin->id = 1;
         $admin->role = 'admin';
         $this->actingAs($admin)->post(route('products.store'), [
-            'code' => 'PRODUCT1', 'product_name' => 'Bali Product', 'lang' => 'en', 'price' => 25,
+            'code' => '', 'product_name' => 'Bali Product', 'lang' => 'en', 'price' => 25,
+            'tour_duration' => '3 hours', 'recommendation_badge' => 'popular',
+            'meta_keyword' => ['Bali rafting', 'Ubud tour'],
             'parent_type' => ['EXISTING'], 'itinerary' => [
                 ['reference' => 'activity:1', 'note' => 'Bring shoes; towel'],
                 ['reference' => 'destination:2', 'note' => '<script>alert(1)</script>'],
             ],
         ])->assertRedirect(route('pages.products', 'all'));
 
-        $product = DB::table('products')->where('code', 'PRODUCT1')->first();
+        $product = DB::table('products')->where('slug', 'bali-product')->first();
         $items = json_decode($product->itinerary, true)['items'];
         $this->assertSame('activity:1', $items[0]['reference']);
         $this->assertSame('Bring shoes; towel', $items[0]['note']);
@@ -478,6 +502,8 @@ class TourReviewTest extends TestCase
             ->assertSee('Bring shoes; towel');
 
         $response = $this->get(route('mix_packages.detail', 'bali-product'))->assertOk()
+            ->assertSee('Estimated tour: 3 hours')->assertSee('Popular')
+            ->assertSee('Bali rafting, Ubud tour')
             ->assertSee(route('activities.detail', 'rafting'))
             ->assertSee(route('destinations.detail', 'waterfall'))
             ->assertSee(asset('assets/img/activity/one.webp'))
@@ -495,6 +521,51 @@ class TourReviewTest extends TestCase
         $this->assertCount(1, $destinationPhotos);
         $this->assertSame(asset('assets/img/activity/one.webp'), $activityPhotos->item(0)->getAttribute('href'));
         $this->assertSame(asset('assets/img/destinasi/waterfall.webp'), $destinationPhotos->item(0)->getAttribute('href'));
+    }
+
+    public function test_product_form_can_select_an_existing_code_for_a_translation(): void
+    {
+        DB::table('products')->insert([
+            'code' => 'PRODUCT1', 'slug' => 'bali-product', 'product_name' => 'Bali Product',
+            'lang' => 'en', 'price' => 25,
+        ]);
+        $admin = new User();
+        $admin->id = 1;
+        $admin->role = 'admin';
+        $this->actingAs($admin)->get(route('pages.products_add'))->assertOk()
+            ->assertSee('Bali Product — PRODUCT1 (en)')
+            ->assertSee('Generate a new code automatically')
+            ->assertSee('Estimated Tour Duration')
+            ->assertSee('Meta Keywords');
+
+        $this->post(route('products.store'), [
+            'code' => 'PRODUCT1', 'product_name' => 'Produk Bali', 'lang' => 'id', 'price' => 25,
+            'tour_duration' => '5 hours', 'recommendation_badge' => 'top_pick',
+            'meta_keyword' => ['Bali rafting', 'Ubud tour'],
+        ])->assertRedirect(route('pages.products', 'all'))->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('products', [
+            'code' => 'PRODUCT1', 'lang' => 'id', 'product_name' => 'Produk Bali',
+            'tour_duration' => '5 hours', 'recommendation_badge' => 'top_pick',
+            'meta_keyword' => 'Bali rafting, Ubud tour',
+        ]);
+        $this->get(route('products.edit', DB::table('products')->where('lang', 'id')->value('id')))
+            ->assertOk()->assertSee('value="5 hours"', false)
+            ->assertSee('value="Bali rafting"', false)
+            ->assertSee('Top Pick');
+    }
+
+    public function test_product_translation_rejects_duplicate_language_and_unknown_codes(): void
+    {
+        DB::table('products')->insert([
+            'code' => 'PRODUCT1', 'slug' => 'bali-product', 'product_name' => 'Bali Product',
+            'lang' => 'en', 'price' => 25,
+        ]);
+        $data = ['code' => 'PRODUCT1', 'product_name' => 'Duplicate', 'lang' => 'en', 'price' => 25];
+        $this->from(route('pages.products_add'))->post(route('products.store'), $data)->assertSessionHasErrors('code');
+        $data['code'] = 'UNKNOWN';
+        $data['lang'] = 'id';
+        $this->from(route('pages.products_add'))->post(route('products.store'), $data)->assertSessionHasErrors('code');
+        $this->assertDatabaseCount('products', 1);
     }
 
     public function test_legacy_itinerary_is_preserved_and_invalid_references_are_rejected(): void

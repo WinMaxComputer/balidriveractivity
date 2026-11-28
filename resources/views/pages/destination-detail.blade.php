@@ -1,12 +1,30 @@
 @php 
-    $des = $destinationDetail[0]->deskripsi ; 
+    $des = $destinationDetail[0]->deskripsi ?? '';
     $desk = explode("</p>", $des) ;
 @endphp
 @extends('layouts.default')
 @section('meta')
-    <title>{{ $destinationDetail[0]->name }}</title>
-    <meta content="{!! $desk[0] !!}" name="description">
-    <meta content="{{ $destinationDetail[0]->slug }}" name="keywords">
+    @php
+        $destination = $destinationDetail[0];
+        $seoTitle = ($destination->meta_title ?? '') ?: $destination->name.' | Bali Destinations - Bali Scenic';
+        $seoDescription = ($destination->meta_description ?? '') ?: \Illuminate\Support\Str::limit(strip_tags($destination->deskripsi ?? ''), 160);
+        $translationsByLanguage = ($destinationTranslations ?? collect())->keyBy('lang');
+    @endphp
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    @if (!empty($destination->meta_keyword))
+      <meta name="keywords" content="{{ $destination->meta_keyword }}">
+    @endif
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ route('destinations.detail', ['slug' => $destination->slug]) }}">
+    <link rel="canonical" href="{{ route('destinations.detail', ['slug' => $destination->slug]) }}">
+    @foreach (['en', 'id'] as $language)
+      @if (isset($translationsByLanguage[$language]))
+        <link rel="alternate" hreflang="{{ $language }}" href="{{ route('destinations.detail', ['locale' => $language, 'slug' => $translationsByLanguage[$language]->slug]) }}">
+      @endif
+    @endforeach
 @endsection
 @section('content')
 
@@ -55,7 +73,7 @@
                         @foreach($gmbr as $key => $slider)
                         <!-- {{ $key }} -->
                         <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
-                            <img src="{{ asset('assets/img/destinasi/'. $slider) }}" class="d-block w-100" alt="$slider">
+                            <img src="{{ asset('assets/img/destinasi/'. $slider) }}" class="d-block w-100" alt="{{ $destinationDetail[0]->name }}">
                         </div>
                         @endforeach
                         </div>

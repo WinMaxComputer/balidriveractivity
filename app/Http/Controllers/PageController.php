@@ -394,8 +394,10 @@ class PageController extends Controller
     }
     public function destinasiAdd()
     {
-        // $defaultLocale = config('app.locale');
-        return view('admin.pages.destinasi_add');
+        $existingDestinations = DB::table('destinations')->orderBy('name')->get(['code', 'name', 'lang'])
+            ->filter(fn ($destination) => is_string($destination->code) && $destination->code !== '')
+            ->groupBy('code');
+        return view('admin.pages.destinasi_add', compact('existingDestinations'));
     }
     public function activity(Request $request, $slug)
     {
@@ -469,6 +471,9 @@ class PageController extends Controller
 
         $activities = DB::table('activities')->get();
         $destinasi = DB::table('destinations')->get();
-        return view('admin.pages.products_add', ['activities' => $activities, 'destinasi' => $destinasi, 'itineraryItems' => []]);
+        $existingProducts = DB::table('products')->orderBy('product_name')->get(['code', 'product_name', 'lang'])
+            ->filter(fn ($product) => is_string($product->code) && $product->code !== '')
+            ->groupBy('code');
+        return view('admin.pages.products_add', compact('activities', 'destinasi', 'existingProducts') + ['itineraryItems' => []]);
     }
 }

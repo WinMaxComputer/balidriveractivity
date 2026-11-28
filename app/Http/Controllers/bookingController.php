@@ -149,7 +149,13 @@ class bookingController extends Controller
         $artikel = Artikel::where('lang', $defaultLocale)->get();
         $galeri = Gallery::where('lang', $defaultLocale)->take(3)->get();
         $product = DB::table('products')->where('lang', $defaultLocale)->orderBy('id', 'desc')->take(4)->get();
-        $activities = DB::table('activities')->where('lang', $defaultLocale)->get();
+        $activities = DB::table('activities')
+                        ->leftJoin('activity_fotos', 'activity_fotos.code', 'activities.code')
+                        ->where('activities.lang', $defaultLocale)
+                        ->select('activities.*', 'activity_fotos.foto')
+                        ->get();
+        $travelGuides = DB::table('travel_guides')->where('lang', $defaultLocale)
+                        ->orderByDesc('created_at')->take(8)->get();
         $ratings = Review::ratingSummaries($product->pluck('code')->merge($tur->pluck('code')));
         // var_dump($kamar[0]->foto);
 
@@ -163,6 +169,7 @@ class bookingController extends Controller
             'fasilitas' => $fasilitas,
             'product' => $product,
             'activities' => $activities,
+            'travelGuides' => $travelGuides,
             'ratings' => $ratings,
             ] );
     }
@@ -192,8 +199,11 @@ class bookingController extends Controller
                         ->select('destinations.*', 'destination_fotos.foto')
                         ->get();
         abort_if($destinationDetail->isEmpty(), 404);
+        $destinationTranslations = DB::table('destinations')->where('code', $destinationDetail[0]->code)
+            ->whereNotNull('slug')->where('slug', '!=', '')
+            ->get(['lang', 'slug']);
                         // dd($destinationDetail);
-        return view('pages.destination-detail', ['destinationDetail' => $destinationDetail]);
+        return view('pages.destination-detail', compact('destinationDetail', 'destinationTranslations'));
     }
 
     public function activity()
@@ -213,9 +223,17 @@ class bookingController extends Controller
                     ->select('activities.*', 'activity_fotos.foto')
                     ->get();
         abort_if($activityDetail->isEmpty(), 404);
+        $activityTranslations = DB::table('activities')->where('code', $activityDetail[0]->code)
+            ->whereNotNull('slug')->where('slug', '!=', '')
+            ->get(['lang', 'slug']);
         $product = DB::table('products')->get();
         $country = DB::table('countries')->get();
-        return view('pages.activity-detail', ['activityDetail' => $activityDetail, 'products' => $product, 'country' => $country,]);
+        return view('pages.activity-detail', [
+            'activityDetail' => $activityDetail,
+            'activityTranslations' => $activityTranslations,
+            'products' => $product,
+            'country' => $country,
+        ]);
     }
 
     public function tourDetail(Request $request, $slug){

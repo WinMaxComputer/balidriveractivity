@@ -9,6 +9,9 @@
         <a href="/destinasi-add" class="btn btn-fill btn-primary">Add</a>
       </div>
       <div class="card-body">
+        @if (session('success'))
+          <div class="alert alert-success" role="status">{{ session('success') }}</div>
+        @endif
         <div class="table-responsive">
 
         <div class="row">

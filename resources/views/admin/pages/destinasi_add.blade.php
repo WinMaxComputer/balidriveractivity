@@ -1,175 +1,229 @@
 @extends('layouts.app', ['page' => __('Add Destinations'), 'pageSlug' => 'destinasi_add'])
-@if(isset($type))
-  @if($type == 'copy')
-    @php $id = ''; @endphp
-  @else
-    @php $id = $destinasiDetail->id ; @endphp
-  @endif
-@endif
+
 @section('content')
+@php
+  $isEditing = isset($destinasiDetail) && ($type ?? '') !== 'copy';
+  $isCopying = isset($destinasiDetail) && ($type ?? '') === 'copy';
+  $destinationTypes = [
+    'ubud' => 'Ubud Bali',
+    'south' => 'South Bali',
+    'north' => 'North Bali',
+    'east' => 'East Bali',
+    'kintamani' => 'Kintamani Bali',
+    'west' => 'West Bali',
+  ];
+  if ($isEditing && !empty($destinasiDetail->type) && !isset($destinationTypes[$destinasiDetail->type])) {
+    $destinationTypes[$destinasiDetail->type] = $destinasiDetail->type.' (existing)';
+  }
+  $storedPhotos = array_values(array_filter(explode(';', $destinasiDetail->foto ?? ''), 'strlen'));
+  $photoNames = old('documents_present') ? old('document', []) : $storedPhotos;
+  $photoNames = is_array($photoNames) ? array_values(array_filter($photoNames, 'is_string')) : [];
+@endphp
 <div class="row">
   <div class="col-md-12">
-    <div class="card ">
+    <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Bali Destinations</h4>
-        
+        <h4 class="card-title">{{ $isEditing ? 'Edit Destination' : ($isCopying ? 'Copy Destination' : 'Add Destination') }}</h4>
       </div>
       <div class="card-body">
+        @if ($errors->any())
+          <div class="alert alert-danger" role="alert">
+            <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+          </div>
+        @endif
+        <form id="destination-form" action="{{ route('destinasi.store') }}" method="POST">
+          @csrf
+          <input type="hidden" name="id" value="{{ old('id', $isEditing ? $destinasiDetail->id : '') }}">
+          <input type="hidden" name="documents_present" value="1">
 
-      <form action="{{ route('destinasi.store') }}" method="POST" enctype="multipart/form-data">
-      @csrf
-        <div class="row">
-          <div class="form-group col-lg-6">
-              <label>Code</label>
-              <input type="hidden" name="id" class="form-control" placeholder="code" value="{{ $id ?? '' }}" >
-              <input type="text" name="code" class="form-control" placeholder="code" value="{{ $destinasiDetail->code ?? '' }}" >
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <label for="destination-code">Code</label>
+              @if ($isEditing)
+                <input type="hidden" name="code" value="{{ $destinasiDetail->code }}">
+                <input id="destination-code" class="form-control" value="{{ $destinasiDetail->code }}" readonly>
+                <small>Translations of the same destination share this code and photo gallery.</small>
+              @else
+                <select id="destination-code" name="code" class="form-control" style="background-color: #000; color: #fff;">
+                  <option value="">Generate a new code automatically</option>
+                  @foreach ($existingDestinations as $code => $destinations)
+                    <option value="{{ $code }}" @selected(old('code', $isCopying ? $destinasiDetail->code : '') === (string) $code)>{{ $destinations->first()->name }} — {{ $code }} ({{ $destinations->pluck('lang')->unique()->implode(', ') }})</option>
+                  @endforeach
+                </select>
+                <small>Select an existing destination only when adding its translation.</small>
+              @endif
+            </div>
+            <div class="form-group col-lg-6">
+              <label for="destination-name">Name</label>
+              <input id="destination-name" type="text" name="name" class="form-control" maxlength="255" value="{{ old('name', $destinasiDetail->name ?? '') }}" required>
+            </div>
+            <div class="form-group col-lg-6">
+              <label for="destination-lang">Language</label>
+              <select id="destination-lang" name="lang" class="form-control" style="background-color: #000; color: #fff;" required>
+                @if ($isEditing && !in_array($destinasiDetail->lang, ['en', 'id'], true))
+                  <option value="{{ $destinasiDetail->lang }}" @selected(old('lang', $destinasiDetail->lang) === $destinasiDetail->lang)>{{ $destinasiDetail->lang }} (existing)</option>
+                @endif
+                <option value="en" @selected(old('lang', $destinasiDetail->lang ?? 'en') === 'en')>English</option>
+                <option value="id" @selected(old('lang', $destinasiDetail->lang ?? 'en') === 'id')>Indonesia</option>
+              </select>
+            </div>
+            <div class="form-group col-lg-6">
+              <label for="destination-slug">Slug</label>
+              <input id="destination-slug" type="text" name="slug" class="form-control" maxlength="255" value="{{ old('slug', $destinasiDetail->slug ?? '') }}">
+            </div>
+            <div class="form-group col-lg-6">
+              <label for="destination-type">Area</label>
+              <select id="destination-type" name="type" class="form-control" style="background-color: #000; color: #fff;" required>
+                @foreach ($destinationTypes as $value => $label)
+                  <option value="{{ $value }}" @selected(old('type', $destinasiDetail->type ?? '') === $value)>{{ $label }}</option>
+                @endforeach
+              </select>
+            </div>
           </div>
-          <div class="form-group col-lg-6">
-            <label>Name</label>
-            <input type="text" name="name" class="form-control" placeholder="Title" value="{{ $destinasiDetail->name ?? '' }}">
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="form-group col-lg-4">
-              <label>slug</label>
-              <input type="text" name="slug" class="form-control" placeholder="slug" value="{{ $destinasiDetail->slug ?? '' }}">
+          <div class="form-group">
+            <label for="destination-photos">Photos</label>
+            <div class="needsclick dropzone" id="destination-photos"></div>
+            <small>Upload JPG, PNG, GIF, or WebP images (maximum 10 MB per image).</small>
           </div>
-          <div class="form-group col-lg-4">
-              <label>Lang</label>
-              <input type="text" name="lang" class="form-control" placeholder="Lang" value="{{ $destinasiDetail->lang ?? '' }}">
-          </div>
-          <div class="form-group col-lg-4">
-              <label>Area</label>
-              <select name="type" class="form-control" style="background-color: #000; color: #fff;" required>
-              <option value="ubud" {{ $destinasiDetail->type === 'ubud' ? 'selected' : '' }}>Ubud Bali</option>
-              <option value="south" {{ $destinasiDetail->type === 'south' ? 'selected' : '' }}>South Bali</option>
-              <option value="north" {{ $destinasiDetail->type === 'north' ? 'selected' : '' }}>North Bali</option>
-              <option value="east" {{ $destinasiDetail->type === 'east' ? 'selected' : '' }}>East Bali</option>
-              <option value="kintamani" {{ $destinasiDetail->type === 'kintamani' ? 'selected' : '' }}>Kintamani Bali</option>
-              <option value="west" {{ $destinasiDetail->type === 'west' ? 'selected' : '' }}>West Bali</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control" id="deskripsi" name="deskripsi" >{{ $destinasiDetail->deskripsi ?? '' }}</textarea>
-        </div>
-        <div class="form-group">
-            <div class="needsclick dropzone" id="document-dropzone"></div>
-        </div>
-        <button type="submit" class="btn btn-fill btn-primary">Simpan</button>
-      </form>
 
+          <div class="form-group">
+            <label for="destination-description">Description</label>
+            <textarea id="destination-description" class="form-control" name="deskripsi" rows="12">{{ old('deskripsi', $destinasiDetail->deskripsi ?? '') }}</textarea>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h5 class="card-title">SEO settings</h5></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="meta-title">SEO title <span id="meta-title-count">0/70</span></label>
+                <input id="meta-title" class="form-control" name="meta_title" maxlength="70" value="{{ old('meta_title', $destinasiDetail->meta_title ?? '') }}" placeholder="Leave empty to use the destination name">
+              </div>
+              <div class="form-group">
+                <label for="meta-description">Meta description <span id="meta-description-count">0/160</span></label>
+                <textarea id="meta-description" class="form-control" name="meta_description" maxlength="160" rows="3">{{ old('meta_description', $destinasiDetail->meta_description ?? '') }}</textarea>
+              </div>
+              <div class="form-group">
+                <label for="meta-keyword">Meta keywords</label>
+                <input id="meta-keyword" class="form-control" name="meta_keyword" maxlength="500" value="{{ old('meta_keyword', $destinasiDetail->meta_keyword ?? '') }}">
+              </div>
+              <div class="border rounded p-3">
+                <small>Search result preview</small>
+                <div id="seo-preview-title" class="text-primary mt-1"></div>
+                <div id="seo-preview-url" class="text-success small"></div>
+                <div id="seo-preview-description" class="small"></div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-fill btn-primary">Simpan</button>
+          <a href="{{ route('pages.destinasi') }}" class="btn btn-secondary">Cancel</a>
+        </form>
       </div>
     </div>
   </div>
-  
 </div>
-          <!-- <textarea class="my-edit form-control" id="my-edit" name="wysiwyg-editor"></textarea> -->
-          
-  @push('js')
-  <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
-  <script>
-    var options = {
+@endsection
+
+@push('js')
+<script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+<script>
+  (function ($) {
+    var nameInput = $('#destination-name');
+    var slugInput = $('#destination-slug');
+    var slugManuallyEdited = {{ $isEditing ? 'true' : 'false' }};
+
+    function makeSlug(value) {
+      return value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+
+    function updateSeoPreview() {
+      var destinationName = nameInput.val().trim() || 'Destination name';
+      var seoTitle = $('#meta-title').val().trim() || destinationName + ' | Bali Destinations - Bali Scenic';
+      var content = $('#destination-description').val() || '';
+      if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances['destination-description']) {
+        content = CKEDITOR.instances['destination-description'].getData();
+      }
+      var contentPreview = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (contentPreview.length > 157) contentPreview = contentPreview.substring(0, 157).trim() + '...';
+      var description = $('#meta-description').val().trim() || contentPreview || 'Add a meta description to preview this destination in search results.';
+
+      $('#meta-title-count').text($('#meta-title').val().length + '/70');
+      $('#meta-description-count').text($('#meta-description').val().length + '/160');
+      $('#seo-preview-title').text(seoTitle);
+      $('#seo-preview-url').text(window.location.origin + '/' + $('#destination-lang').val() + '/destinations/' + (slugInput.val() || 'destination-slug'));
+      $('#seo-preview-description').text(description);
+    }
+
+    nameInput.on('input', function () {
+      if (!slugManuallyEdited) slugInput.val(makeSlug(this.value));
+      updateSeoPreview();
+    });
+    slugInput.on('input', function () {
+      slugManuallyEdited = this.value !== '';
+      updateSeoPreview();
+    });
+    $('#meta-title, #meta-description, #destination-lang').on('input change', updateSeoPreview);
+    updateSeoPreview();
+
+    var editorOptions = {
       filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-      filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
+      filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token={{ csrf_token() }}',
       filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-      filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
+      filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token={{ csrf_token() }}'
     };
-    CKEDITOR.replace('deskripsi', options);
-    // CKEDITOR.replace('price', options);
-    // CKEDITOR.replace('pickup', options);
-    // CKEDITOR.replace('payment', options);
-    // CKEDITOR.replace('note', options);
+    var editor = CKEDITOR.replace('destination-description', editorOptions);
+    editor.on('change', updateSeoPreview);
+    editor.on('instanceReady', updateSeoPreview);
 
-
-    var uploadedDocumentMap = {}
-    Dropzone.options.documentDropzone = {
+    Dropzone.options.destinationPhotos = {
       url: '{{ route('destinasi.storeMedia') }}',
-      maxFilesize: 10, // MB
-      acceptedFiles: '.png, .jpg, .jpeg, .gif, .webp',
+      maxFilesize: 10,
+      acceptedFiles: '.jpg,.jpeg,.png,.gif,.webp',
       addRemoveLinks: true,
-      headers: {
-        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-      },
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
       success: function (file, response) {
-        console.log(file);
-        $('form').append('<input type="hidden" name="document[]" value="' + response.name + '">')
-        uploadedDocumentMap[file.name] = response.name
+        file.destinationPhotoName = response.name;
+        $('<input>', { type: 'hidden', name: 'document[]', value: response.name }).appendTo('#destination-form');
       },
       removedfile: function (file) {
-        // console.log(file.xhr);
-        if(file.xhr === undefined){
-          nama = file.name ;
-        }else{
-          var response = JSON.parse(file.xhr.response);
-          nama = response.name ;
-          console.log(response.name);
+        var photoName = file.destinationPhotoName;
+        if (photoName) {
+          $('#destination-form input[name="document[]"]').filter(function () {
+            return this.value === photoName;
+          }).remove();
+          if (!file.existingPhoto) {
+            $.ajax({
+              headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+              type: 'POST',
+              url: '{{ route('destinasi.deleteMedia') }}',
+              data: { filetodelete: photoName },
+              error: function () { alert('Unable to remove the uploaded photo. Please try again.'); }
+            });
+          }
         }
-        $.ajax({
-            headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-            type:'POST',
-            url:'/destinasi/media/delete',
-            data : { "filetodelete" : nama },
-            success : function (data) {
-              // console.log(data)
-              
-            }
-        }); 
-        file.previewElement.remove()
-        var name = ''
-        if (typeof nama !== 'undefined') {
-          name = nama
-        } else {
-          name = uploadedDocumentMap[nama]
-        }
-        $('form').find('input[name="document[]"][value="' + name + '"]').remove()     
-      
+        if (file.previewElement) file.previewElement.remove();
       },
       init: function () {
-        // console.log('onload dropzone');
-
-        @if(isset($destinasiDetail) && $destinasiDetail->foto)
-          var filess = {!! json_encode($destinasiDetail->foto) !!}
-          var filesa = filess.split(';');
-
-          const files = [];
-          for (let a = 0; a < filesa.length -1; a++) {
-              files.push ({
-                  'file_name': filesa[a],
-              });
-              // console.log(filesa[a])
-          }
-
-          // console.log(files);
-          for (var i in files) {
-            var file = files[i]
-            // console.log(this)
-            // this.files.push(file);
-
-            // this.options.addedfile.call(this, file)
-            // file.previewElement.classList.add('dz-complete')
-
-            // var principal = '@Model.Article.Image'; 
-            let mockFile = { name: file.file_name, size: 12345, type: 'image/jpg', accepted: true };
-            this.emit("addedfile", mockFile);
-            this.emit("thumbnail", mockFile, "/assets/img/destinasi/" + file.file_name)
-            {
-                $('[data-dz-thumbnail]').css('height', '120');
-                $('[data-dz-thumbnail]').css('width', '120');
-                $('[data-dz-thumbnail]').css('object-fit', 'cover');
-            };              
-            this.emit('complete', mockFile);
-            this.files.push(mockFile);
-
-            $('form').append('<input type="hidden" name="document[]" value="' + file.file_name + '">')
-          }
-        @endif
+        var photos = @json($photoNames);
+        var savedPhotos = @json($storedPhotos);
+        photos.forEach(function (photoName) {
+          var mockFile = {
+            name: photoName,
+            size: 12345,
+            type: 'image/jpeg',
+            accepted: true,
+            destinationPhotoName: photoName,
+            existingPhoto: savedPhotos.indexOf(photoName) !== -1
+          };
+          this.emit('addedfile', mockFile);
+          this.emit('thumbnail', mockFile, '/assets/img/destinasi/' + encodeURIComponent(photoName));
+          this.emit('complete', mockFile);
+          this.files.push(mockFile);
+          $('<input>', { type: 'hidden', name: 'document[]', value: photoName }).appendTo('#destination-form');
+        }, this);
       }
-    }
-    
-  </script>
- 
-  @endpush
-@endsection
+    };
+  })(jQuery);
+</script>
+@endpush

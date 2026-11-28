@@ -35,6 +35,8 @@
     @include('includes.headmenudetail', ['banner' => '1.webp' ?? null, 'judul' => 'Bali Destinations' ?? null])
   @elseif (Route::is('activities') || Route::is('activities.detail'))
     @include('includes.headmenudetail', ['banner' => '1.webp' ?? null, 'judul' => 'Bali Activities' ?? null])
+  @elseif (Route::is('travel_guides') || Route::is('travel_guides.detail'))
+    @include('includes.headmenudetail', ['banner' => '1.webp', 'judul' => __('Travel Guide & Tips')])
   @elseif (Route::is('tour_packages') || Route::is('tour_packages.detail') || Route::is('tour_reviews.form') || Route::is('mix_packages') || Route::is('mix_packages.detail') || Route::is('product_reviews.form'))
     @include('includes.headmenudetail', ['banner' => '1.webp' ?? null, 'judul' => 'Mix Packages' ?? null])
   @elseif (Route::is('events') || Route::is('transport'))

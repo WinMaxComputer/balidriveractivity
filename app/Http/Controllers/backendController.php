@@ -239,12 +239,14 @@ class backendController extends Controller
 
     public function storeMediaDestinasi(Request $request)
     {
-        $path = public_path('assets/img/destinasi/'); //storage_path('tmp/uploads');
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
+        $file = $request->validate([
+            'file' => ['required', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:10240'],
+        ])['file'];
+        $path = public_path('assets/img/destinasi');
+        if (!is_dir($path) && !mkdir($path, 0755, true) && !is_dir($path)) {
+            throw new \RuntimeException('Unable to create the destination photo directory.');
         }
-        $file = $request->file('file');
-        $name = uniqid() . '_' . trim($file->getClientOriginalName());
+        $name = Str::uuid().'.'.$file->extension();
         $file->move($path, $name);
         return response()->json([
             'name'          => $name,
@@ -253,81 +255,137 @@ class backendController extends Controller
     }
     public function deleteMediaDestinasi(Request $request)
     {
-        $toDelete= $request->filetodelete ;
-        unlink(public_path('assets/img/destinasi/'.$toDelete));
+        $name = $request->validate(['filetodelete' => ['required', 'string', 'max:255']])['filetodelete'];
+        abort_if(str_contains($name, '/') || str_contains($name, '\\') || str_contains($name, ';'), 422);
+        $referenced = DB::table('destination_fotos')->get(['foto'])->contains(function ($row) use ($name) {
+            return in_array($name, array_filter(explode(';', $row->foto ?? ''), 'strlen'), true);
+        });
+        abort_if($referenced, 409, 'This photo is attached to a saved destination.');
+        $path = public_path('assets/img/destinasi/'.$name);
+        abort_unless(is_file($path), 404);
+        if (!unlink($path)) {
+            throw new \RuntimeException('Unable to delete the destination photo.');
+        }
     }
 
     public function storeDestinasi(Request $request)
     {
-        try{
-            $exception = DB::transaction(function() use ($request){ 
-            
-                $data = $request->all();
-                $data['id'] = $data['id'] ?? '';
-                $data['code'] = $data['code'] ?? '';
-                $data['deskripsi'] = $data['deskripsi'] ?? '';
-                $data['name'] = $data['name'] ?? '';
-                $data['slug'] = $data['slug'] ?? '';
-                $data['type'] = $data['type'] ?? '';
-                $data['lang'] = $data['lang'] ?? '';
-                $data['meta_keyword'] = $data['meta_keyword'] ?? '';
-                $data['meta_description'] = $data['meta_description'] ?? '';
-                $data['document'] = $data['document'] ?? [];
-                $data['parent_type'] = $data['parent_type'] ?? [];
-                $data['destination'] = $data['destination'] ?? [];
-                $data['price'] = $data['price'] ?? 0;
-            
-                $gmbr = "";
-                $foto = $data['document'];
-                foreach($foto as $ft){
-                    $gmbr = $gmbr.$ft.";" ;
-                }
-                // $desti = implode(';', $data['destination']);
-                $project = DB::table('destinations')->upsert([
-                    'id' => $data['id'],
-                    'code' => $data['code'],
-                    'deskripsi' => $data['deskripsi'],
-                    'name' => $data['name'],
-                    'slug' => $data['slug'],
-                    'type' => $data['type'],
-                    'lang' => $data['lang'],
-                    'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
-                    'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
-                ], 'id');
-                DB::table('destination_fotos')->upsert([
-                    'code' => $data['code'],
-                    'foto' => $gmbr,
-                    'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
-                    'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
-                ], 'code');
+        $id = $request->validate([
+            'id' => ['nullable', 'integer', Rule::exists('destinations', 'id')],
+        ])['id'] ?? null;
+        $previous = $id ? DB::table('destinations')->where('id', $id)->first() : null;
+        abort_if($id && !$previous, 404);
 
-                DB::commit();
-            });
-            if(is_null($exception)) {
-                // return response()->json([
-                //     'success' => true,
-                //     'message' => 'Post Berhasil Diupdate!',
-                // ], 200);
-                return redirect()->route('pages.destinasi');
-            } else {
-                DB::rollback();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Post Gagal Diupdate!',
-                ], 500);
-                // return redirect()->route('pages.room_add');
-            }
-        } catch (\Exception $e) {
-            DB::rollback();
-            // something went wrong
-            return response()->json([
-             'success' => false,
-             'message' => 'exception'.$e,
-         ], 400);
-            // return redirect()->route('pages.room_add');
+        $slug = $request->input('slug');
+        if ((!is_string($slug) || trim($slug) === '') && is_string($request->input('name'))) {
+            $slug = $request->input('name');
+        }
+        if (is_string($slug)) {
+            $request->merge(['slug' => Str::slug($slug)]);
         }
 
-        // return redirect()->route('pages.rooms');
+        $types = ['ubud', 'south', 'north', 'east', 'kintamani', 'west'];
+        $languages = array_filter([...LocalizedRoutes::LOCALES, $previous->lang ?? null], fn ($value) => is_string($value) && $value !== '');
+        $data = $request->validate([
+            'code' => [$id ? 'required' : 'nullable', 'string', 'max:100', ...(!$id ? [Rule::exists('destinations', 'code')] : [])],
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => [
+                'required', 'string', 'max:255',
+                Rule::unique('destinations', 'slug')->where('lang', $request->input('lang'))->ignore($id),
+            ],
+            'lang' => ['required', 'string', Rule::in($languages)],
+            'type' => ['required', 'string', Rule::in(array_filter([...$types, $previous->type ?? null]))],
+            'deskripsi' => ['nullable', 'string'],
+            'meta_title' => ['nullable', 'string', 'max:70'],
+            'meta_keyword' => ['nullable', 'string', 'max:500'],
+            'meta_description' => ['nullable', 'string', 'max:160'],
+            'document' => ['nullable', 'array'],
+            'document.*' => ['required', 'string', 'max:255', 'distinct'],
+        ]);
+
+        $code = $previous->code ?? ($data['code'] ?? null);
+        if ($code && (!$previous || $data['lang'] !== $previous->lang)) {
+            $duplicate = DB::table('destinations')->where('code', $code)->where('lang', $data['lang'])
+                ->when($id, fn ($query) => $query->where('id', '!=', $id))->exists();
+            if ($duplicate) {
+                throw ValidationException::withMessages(['code' => 'This destination already has a translation in the selected language.']);
+            }
+        }
+
+        if (!$code) {
+            for ($attempt = 0; $attempt < 5; $attempt++) {
+                $code = 'DST-'.Str::upper(Str::random(16));
+                if (!DB::table('destinations')->where('code', $code)->exists()
+                    && !DB::table('destination_fotos')->where('code', $code)->exists()) {
+                    break;
+                }
+            }
+            if (DB::table('destinations')->where('code', $code)->exists()
+                || DB::table('destination_fotos')->where('code', $code)->exists()) {
+                throw ValidationException::withMessages(['code' => 'Could not generate a destination code. Please try again.']);
+            }
+        }
+
+        $photos = array_values($data['document'] ?? []);
+        foreach ($photos as $index => $photo) {
+            if (str_contains($photo, '/') || str_contains($photo, '\\') || str_contains($photo, ';')
+                || !is_file(public_path('assets/img/destinasi/'.$photo))) {
+                throw ValidationException::withMessages(["document.$index" => 'The selected photo is invalid or unavailable. Upload it again.']);
+            }
+        }
+
+        $photoRow = DB::table('destination_fotos')->where('code', $code)->first();
+        $previousPhotos = $photoRow
+            ? array_values(array_filter(explode(';', $photoRow->foto ?? ''), 'strlen'))
+            : [];
+        $preserveSharedGallery = !$id && $photoRow;
+        if ($preserveSharedGallery) {
+            $photos = array_values(array_unique(array_merge($previousPhotos, $photos)));
+        }
+        $shouldUpdateGallery = !$preserveSharedGallery || $photos !== $previousPhotos;
+
+        $now = now();
+        $attributes = [
+            'code' => $code,
+            'deskripsi' => $data['deskripsi'] ?? '',
+            'name' => $data['name'],
+            'slug' => $data['slug'],
+            'type' => $data['type'],
+            'lang' => $data['lang'],
+            'meta_title' => $data['meta_title'] ?? '',
+            'meta_keyword' => $data['meta_keyword'] ?? '',
+            'meta_description' => $data['meta_description'] ?? '',
+            'updated_at' => $now,
+        ];
+
+        try {
+            DB::transaction(function () use ($id, $attributes, $now, $code, $photos, $shouldUpdateGallery) {
+                if ($id) {
+                    DB::table('destinations')->where('id', $id)->update($attributes);
+                } else {
+                    DB::table('destinations')->insert($attributes + ['created_at' => $now]);
+                }
+                if ($shouldUpdateGallery) {
+                    DB::table('destination_fotos')->upsert([
+                        'code' => $code,
+                        'foto' => $photos ? implode(';', $photos).';' : '',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ], ['code'], ['foto', 'updated_at']);
+                }
+            });
+        } catch (UniqueConstraintViolationException $exception) {
+            $codeConflict = DB::table('destinations')->where('code', $code)->where('lang', $data['lang'])
+                ->when($id, fn ($query) => $query->where('id', '!=', $id))->exists();
+            if ($codeConflict) {
+                throw ValidationException::withMessages(['code' => 'This destination already has a translation in the selected language.']);
+            }
+            throw ValidationException::withMessages(['slug' => 'A destination with this slug already exists in the selected language.']);
+        }
+
+        $this->removeUnusedDestinationPhotos(array_diff($previousPhotos, $photos));
+
+        return redirect()->route('pages.destinasi')->with('success', 'Destination saved successfully.');
     }
 
     public function editDestinasi(Request $request){
@@ -335,16 +393,33 @@ class backendController extends Controller
         $type = $request->type ;
 
         $destinasiDetail = DB::table('destinations')->where('destinations.id', $destinasi_code)
-                    ->join('destination_fotos', 'destination_fotos.code', 'destinations.code')
+                    ->leftJoin('destination_fotos', 'destination_fotos.code', 'destinations.code')
                     ->select('destinations.*', 'destination_fotos.foto')
                     ->first();
+        abort_unless($destinasiDetail, 404);
+        $existingDestinations = DB::table('destinations')->orderBy('name')->get(['code', 'name', 'lang'])
+            ->filter(fn ($destination) => is_string($destination->code) && $destination->code !== '')
+            ->groupBy('code');
         if($type == 'copy'){
             $data = 'copy';
         }else{
             $data = 'edit';
         }
-        return view('admin.pages.destinasi_add', ['destinasiDetail' => $destinasiDetail, 'type' => $data]);
+        return view('admin.pages.destinasi_add', compact('destinasiDetail', 'existingDestinations') + ['type' => $data]);
 
+    }
+
+    private function removeUnusedDestinationPhotos(array $photos): void
+    {
+        foreach ($photos as $photo) {
+            $stillReferenced = DB::table('destination_fotos')->get(['foto'])->contains(function ($row) use ($photo) {
+                return in_array($photo, array_filter(explode(';', $row->foto ?? ''), 'strlen'), true);
+            });
+            $path = public_path('assets/img/destinasi/'.$photo);
+            if (!$stillReferenced && is_file($path) && !unlink($path)) {
+                throw new \RuntimeException('Unable to remove an unused destination photo.');
+            }
+        }
     }
 
     public function storeMediaActivity(Request $request)
@@ -389,6 +464,9 @@ class backendController extends Controller
             }],
             'area.*' => ['required', 'string', 'distinct', Rule::in(array_merge($areaIds, $legacyAreas))],
             'deskripsi' => ['nullable', 'string'],
+            'meta_title' => ['nullable', 'string', 'max:70'],
+            'meta_keyword' => ['nullable', 'string', 'max:500'],
+            'meta_description' => ['nullable', 'string', 'max:160'],
             'document' => ['nullable', 'array'],
             'document.*' => ['required', 'string', 'max:255'],
         ]);
@@ -406,6 +484,9 @@ class backendController extends Controller
             'name' => $data['name'], 'slug' => $data['slug'], 'lang' => $data['lang'],
             'type' => $data['type'], 'area' => implode(';', $data['area']).';',
             'deskripsi' => $data['deskripsi'] ?? '', 'updated_at' => now(),
+            'meta_title' => $data['meta_title'] ?? '',
+            'meta_keyword' => $data['meta_keyword'] ?? '',
+            'meta_description' => $data['meta_description'] ?? '',
         ];
         if (!$id && !$code) {
             for ($attempt = 0; $attempt < 5; $attempt++) {
@@ -489,16 +570,25 @@ class backendController extends Controller
 
     public function storeProducts(Request $request)
     {
+        $id = $request->validate(['id' => ['nullable', 'integer', Rule::exists('products', 'id')]])['id'] ?? null;
+        $previous = $id ? DB::table('products')->where('id', $id)->first() : null;
+        $languages = array_filter([...LocalizedRoutes::LOCALES, $previous->lang ?? null], fn ($value) => is_string($value) && $value !== '');
+        if (is_string($request->input('meta_keyword'))) {
+            $request->merge(['meta_keyword' => preg_split('/[,;]+/', $request->input('meta_keyword'), -1, PREG_SPLIT_NO_EMPTY)]);
+        }
         $data = $request->validate([
-            'id' => ['nullable', 'integer', 'exists:products,id'],
-            'code' => ['required', 'string', 'max:100'],
+            'id' => ['nullable', 'integer', Rule::exists('products', 'id')],
+            'code' => [$id ? 'required' : 'nullable', 'string', 'max:100', ...(!$id ? [Rule::exists('products', 'code')] : [])],
             'product_name' => ['required', 'string', 'max:255'],
-            'lang' => ['required', 'string', 'max:50'],
+            'lang' => ['required', 'string', Rule::in($languages)],
             'price' => ['required', 'integer', 'min:0', 'max:2147483647'],
             'product_des' => ['nullable', 'string'],
             'product_included' => ['nullable', 'string'],
             'product_excluded' => ['nullable', 'string'],
-            'meta_keyword' => ['nullable', 'string'],
+            'tour_duration' => ['nullable', 'string', 'max:100'],
+            'recommendation_badge' => ['nullable', Rule::in(['popular', 'best_value', 'top_pick'])],
+            'meta_keyword' => ['nullable', 'array', 'max:6'],
+            'meta_keyword.*' => ['string', 'max:40'],
             'meta_description' => ['nullable', 'string'],
             'document' => ['nullable', 'array'],
             'document.*' => ['string'],
@@ -511,6 +601,25 @@ class backendController extends Controller
             'itinerary.*.reference' => ['nullable', 'string', 'regex:/^(activity|destination):[1-9][0-9]*$/'],
             'itinerary.*.note' => ['nullable', 'string'],
         ]);
+        $code = $data['code'] ?? null;
+        if ($code && (!$previous || $code !== $previous->code || $data['lang'] !== $previous->lang)) {
+            $duplicate = DB::table('products')->where('code', $code)->where('lang', $data['lang'])
+                ->when($id, fn ($query) => $query->where('id', '!=', $id))->exists();
+            if ($duplicate) {
+                throw ValidationException::withMessages(['code' => 'This product already has a translation in the selected language.']);
+            }
+        }
+        if (!$id && !$code) {
+            for ($attempt = 0; $attempt < 5; $attempt++) {
+                $code = 'PRD-'.Str::upper(Str::random(16));
+                if (!DB::table('products')->where('code', $code)->exists()) {
+                    break;
+                }
+            }
+            if (DB::table('products')->where('code', $code)->exists()) {
+                throw ValidationException::withMessages(['code' => 'Could not generate a product code. Please try again.']);
+            }
+        }
 
         $items = $data['itinerary'] ?? [];
         $ids = ['activity' => [], 'destination' => []];
@@ -530,7 +639,6 @@ class backendController extends Controller
         ];
         $activityCodes = $data['parent_type'] ?? [];
         $destinationCodes = $data['destination'] ?? [];
-        $previous = isset($data['id']) ? DB::table('products')->where('id', $data['id'])->first() : null;
         $legacyNotes = $previous
             ? collect(ProductItinerary::parse($previous->itinerary))->where('legacy_html', true)->pluck('note')->all()
             : [];
@@ -561,7 +669,7 @@ class backendController extends Controller
         }
 
         $attributes = [
-            'code' => $data['code'],
+            'code' => $code,
             'product_des' => $data['product_des'] ?? '',
             'itinerary' => json_encode(['format' => 'product_itinerary_v1', 'items' => $savedItems], JSON_THROW_ON_ERROR),
             'product_included' => $data['product_included'] ?? '',
@@ -571,8 +679,10 @@ class backendController extends Controller
             'parent_type' => implode(';', array_unique($activityCodes)).';',
             'dst_type' => implode(';', array_unique($destinationCodes)).';',
             'lang' => $data['lang'],
-            'meta_keyword' => $data['meta_keyword'] ?? '',
+            'meta_keyword' => implode(', ', array_unique(array_map('trim', $data['meta_keyword'] ?? []))),
             'meta_description' => $data['meta_description'] ?? '',
+            'tour_duration' => $data['tour_duration'] ?? '',
+            'recommendation_badge' => $data['recommendation_badge'] ?? '',
             'product_foto' => implode('', array_map(fn ($file) => $file.';', $data['document'] ?? [])),
             'price' => $data['price'],
             'updated_at' => now(),

@@ -14,12 +14,13 @@ class LocalizedRoutes
         'mix_packages.detail' => 'products',
         'destinations.detail' => 'destinations',
         'activities.detail' => 'activities',
+        'travel_guides.detail' => 'travel_guides',
     ];
 
     public const PUBLIC_ROUTES = [
         'home', 'about-us', 'transfer', 'events', 'transport', 'tour_packages',
-        'service', 'mix_packages', 'destinations', 'activities',
-        'tour_packages.detail', 'mix_packages.detail', 'destinations.detail', 'activities.detail',
+        'service', 'mix_packages', 'destinations', 'activities', 'travel_guides',
+        'tour_packages.detail', 'mix_packages.detail', 'destinations.detail', 'activities.detail', 'travel_guides.detail',
     ];
 
     public static function languageUrl(Request $request, string $locale): string

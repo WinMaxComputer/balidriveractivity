@@ -2,7 +2,7 @@
 @section('meta')
     <title>Bali Best Activity - Bali Driver Activity</title>
     <meta content="bali destinations, visit bali interesting place" name="description">
-    <meta content="bali good tour, car rental bali, ubud tour, bali tour {{ $mixDetail[0]->slug }}" name="keywords">
+    <meta content="{{ $mixDetail[0]->meta_keyword ?: 'bali good tour, car rental bali, ubud tour, bali tour '.$mixDetail[0]->slug }}" name="keywords">
 
 @endsection
 @section('content')
@@ -11,6 +11,12 @@
     <div class="page-title dark-background" data-aos="fade" style="background-image: url('{{ asset('assets/img/travel/showcase-8.webp') }}');">
       <div class="container position-relative">
         <h1>{{ $mixDetail[0]->product_name }}</h1>
+        <div class="product-detail-meta">
+          @if (!empty($mixDetail[0]->tour_duration))
+            <span class="product-detail-duration"><i class="bi bi-clock"></i> Estimated tour: {{ $mixDetail[0]->tour_duration }}</span>
+          @endif
+          @include('includes.product-recommendation-badge', ['product' => $mixDetail[0], 'inline' => true])
+        </div>
         <nav class="breadcrumbs">
           <ol>
             <li><a href="{{ route('home') }}">Home</a></li>

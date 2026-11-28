@@ -65,6 +65,8 @@ Route::prefix('{locale}')->where(['locale' => 'en|id'])->group(function () {
     Route::get('/destinations/{slug}', [App\Http\Controllers\bookingController::class , 'destinationDetail'])->name('destinations.detail');
     Route::get('/activities', [App\Http\Controllers\bookingController::class , 'activity'])->name('activities');
     Route::get('/activities/{slug}', [App\Http\Controllers\bookingController::class , 'activityDetail'])->name('activities.detail');
+    Route::get('/travel-guide', [App\Http\Controllers\TravelGuideController::class, 'index'])->name('travel_guides');
+    Route::get('/travel-guide/{slug}', [App\Http\Controllers\TravelGuideController::class, 'show'])->name('travel_guides.detail');
 });
 
 Route::get('/tour_packages/{slug}/review', [App\Http\Controllers\bookingController::class, 'tourDetail'])->middleware('signed')->name('tour_reviews.form');
@@ -119,6 +121,13 @@ Route::group(['middleware' => ['auth', EnsureAdministrator::class]], function() 
 
 
     // your routes
+    Route::get('travel-guide', [App\Http\Controllers\TravelGuideController::class, 'adminIndex'])->name('pages.travel-guide');
+    Route::get('travel-guide-add', [App\Http\Controllers\TravelGuideController::class, 'create'])->name('pages.travel-guide_add');
+    Route::post('travel-guide/photo', [App\Http\Controllers\TravelGuideController::class, 'storePhoto'])->name('travel-guide.storePhoto');
+    Route::post('travel-guide/photo/delete', [App\Http\Controllers\TravelGuideController::class, 'deletePhoto'])->name('travel-guide.deletePhoto');
+    Route::post('travel-guide-store', [App\Http\Controllers\TravelGuideController::class, 'store'])->name('travel-guide.store');
+    Route::get('travel-guide-edit/{id}', [App\Http\Controllers\TravelGuideController::class, 'edit'])->whereNumber('id')->name('travel-guide.edit');
+    Route::delete('travel-guide/{id}', [App\Http\Controllers\TravelGuideController::class, 'destroy'])->whereNumber('id')->name('travel-guide.destroy');
     Route::get('rates', ['as' => 'pages.rates', 'uses' => 'App\Http\Controllers\PageController@rates']);
     Route::get('orders', [App\Http\Controllers\PageController::class, 'orders'])->name('pages.orders');
     Route::get('transfer-orders', [App\Http\Controllers\TransferOrderController::class, 'index'])->name('pages.transfer-order');

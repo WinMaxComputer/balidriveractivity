@@ -30,6 +30,9 @@ class ActivityFormTest extends TestCase
             $table->string('type');
             $table->string('area');
             $table->text('deskripsi');
+            $table->string('meta_title', 70)->nullable();
+            $table->string('meta_keyword', 500)->nullable();
+            $table->string('meta_description', 160)->nullable();
             $table->timestamps();
         });
         Schema::create('activity_fotos', function (Blueprint $table) {
@@ -63,12 +66,21 @@ class ActivityFormTest extends TestCase
         $this->get(route('pages.activity_add'))->assertOk()
             ->assertSee('name="area[]"', false)->assertSee('Land Activity')
             ->assertSee('Water Activity')->assertSee('English')->assertSee('Kintamani')
-            ->assertSee('Generate a new code automatically');
-        $this->post(route('activity.store'), $this->data())
+            ->assertSee('Generate a new code automatically')->assertSee('SEO settings');
+        $this->post(route('activity.store'), $this->data([
+            'meta_title' => 'Bali Rafting Guide',
+            'meta_keyword' => 'Bali rafting, river adventure',
+            'meta_description' => 'Discover rafting adventures in Bali.',
+        ]))
             ->assertRedirect(route('pages.activity', 'all'))->assertSessionHasNoErrors();
         $code = DB::table('activities')->value('code');
         $this->assertMatchesRegularExpression('/^ACT-[A-Z0-9]{16}$/', $code);
         $this->assertDatabaseHas('activities', ['code' => $code, 'lang' => 'en', 'type' => 'water', 'area' => '1;5;']);
+        $this->assertDatabaseHas('activities', [
+            'code' => $code,
+            'meta_title' => 'Bali Rafting Guide',
+            'meta_description' => 'Discover rafting adventures in Bali.',
+        ]);
         $this->assertDatabaseHas('activity_fotos', ['code' => $code, 'foto' => 'photo.webp;']);
     }
 
